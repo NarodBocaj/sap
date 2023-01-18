@@ -1,4 +1,5 @@
 mod friends;
+//mod animals;
 
 fn main() {
     let mut friendly_friends = vec![];
@@ -31,6 +32,13 @@ fn main() {
         tier: 1,
         xp: 1,
     };
+    let otter = friends::Friend{
+        attack: 1,
+        health: 2,
+        name: "otter".to_string(),
+        tier: 1,
+        xp: 1,
+    };
 
     friendly_friends.push(ant);
     friendly_friends.push(ant1);
@@ -42,6 +50,10 @@ fn main() {
     dead_pet.faint(&mut friendly_friends, 3);
 
     
+    print_friends(&friendly_friends);
+
+    otter.buy(&mut friendly_friends, 3);
+
     print_friends(&friendly_friends);
 }
 

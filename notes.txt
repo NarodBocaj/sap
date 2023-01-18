@@ -1,0 +1,28 @@
+Additional implementations needed for friends class:
+    Sell
+    Start of battle
+    Level up
+    Friend summoned
+    Before attack
+    Hurt
+    start of turn
+    end turn (parrot has special end turn)
+    friend ahead attacks
+    friend ahead faints
+    knock out
+    summonned??
+    friend faints (likely can be combined with friend ahead faints)
+
+Pets that may not need there on impl:
+    Rabbit
+    Shrimp
+    Worm
+    seal
+    cat
+    dragon
+    tiger
+
+Large remaining things to do:
+    Implement food
+    Shop system
+    Round system and fighting
