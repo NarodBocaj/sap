@@ -1,6 +1,7 @@
 use rand::Rng;
+use once_cell::sync::Lazy;
 
-//#[derive(Clone)]
+#[derive(Clone)]
 pub struct Friend{
     pub attack: i32,
     pub health: i32,
@@ -45,7 +46,7 @@ impl Friend{
     }
 
     //we will get around issues related to index randomness right now by implementing buy effects before putting a pet into an index
-    pub fn buy(&self, friendly_friends: &mut Vec<Friend>, idx: i32) -> (){
+    pub fn buy(&self, friendly_friends: &mut Vec<Friend>, _idx: i32) -> (){
         let lvl = (self.xp / 3) + 1;
 
         if self.name == "otter".to_string(){
@@ -56,6 +57,7 @@ impl Friend{
                 }
             }
             else{
+                //not sure this random for second index is working as intended
                 let rnd_idx1 = rand::thread_rng().gen_range(0..friendly_friends.len());
                 let rnd_idx2 = (0..friendly_friends.len()).filter(|x| *x != rnd_idx1).next().unwrap();
                 friendly_friends[rnd_idx1 as usize].attack += 1 * lvl;
@@ -70,11 +72,10 @@ impl Friend{
 }
 
 
-//implement the copy trait for Friend and this should work as anticpated
-// pub static ant100: Friend = Friend{
-//     attack: 2,
-//     health: 1,
-//     name: "ant".to_string(),
-//     tier: 1,
-//     xp: 1,
-// };
+pub static ant100: Friend = Friend{
+    attack: 2,
+    health: 1,
+    name: Lazy::new(||{"ant".to_string()}),
+    tier: 1,
+    xp: 1,
+};

@@ -45,7 +45,7 @@ fn main() {
     friendly_friends.push(flamingo);
     friendly_friends.push(cricket);
 
-    //let mut friend1 = friends::ant100;
+    // let mut friend1 = friends::ant100.clone();
 
     let dead_pet: friends::Friend = (friendly_friends.pop()).unwrap();
 
