@@ -45,6 +45,8 @@ fn main() {
     friendly_friends.push(flamingo);
     friendly_friends.push(cricket);
 
+    //let mut friend1 = friends::ant100;
+
     let dead_pet: friends::Friend = (friendly_friends.pop()).unwrap();
 
     dead_pet.faint(&mut friendly_friends, 3);

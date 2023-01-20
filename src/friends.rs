@@ -68,3 +68,13 @@ impl Friend{
 
     }
 }
+
+
+//implement the copy trait for Friend and this should work as anticpated
+// pub static ant100: Friend = Friend{
+//     attack: 2,
+//     health: 1,
+//     name: "ant".to_string(),
+//     tier: 1,
+//     xp: 1,
+// };
