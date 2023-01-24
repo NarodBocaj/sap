@@ -46,7 +46,4 @@ impl Shop{
     pub fn freeze(&self, idx){
         //takes and idx from for_sale vec and adds it here
     }
-}   
-
-
-
+}

@@ -3,6 +3,8 @@ mod friends;
 
 fn main() {
     let mut friendly_friends = vec![];
+    let mut lives: i32 = 5;
+    let mut trophies: i32 = 0;
 
     let ant = friends::Friend{
         attack: 2,
@@ -62,5 +64,19 @@ fn main() {
 fn print_friends(friendly_friends: & Vec<friends::Friend>) -> (){
     for i in 0..friendly_friends.len(){
         println!("{} {}/{}", friendly_friends[i].name, friendly_friends[i].attack, friendly_friends[i].health);
+    }
+}
+
+fn battle(friendly_friends: &mut Vec<friends::Friend>, enemy_friends: &mut Vec<friends::Friend>, trophies: &mut i32, lives: &mut i32) -> (){
+    //need to figure out how to deep copy these vecs
+    while friendly_friends.len() > 0 && enemy_friends.len() > 0{
+        //make them battle
+    }
+    if friendly_friends.len() > 0{
+        *trophies += 1;
+    }
+    else if friendly_friends.len() == 0 && enemy_friends.len() > 0{
+        *lives -= 1;
+        //situation where both vecs have len == 0 is a tie and nothing happens
     }
 }
