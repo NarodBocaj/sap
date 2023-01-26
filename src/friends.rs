@@ -1,11 +1,13 @@
-use rand::Rng;
-use once_cell::sync::Lazy;
+mod shop;
 
-#[derive(Clone)]
+use rand::Rng;
+
+
+//#[derive(Clone)]
 pub struct Friend{
     pub attack: i32,
     pub health: i32,
-    pub name: String,
+    pub id: i32,
     pub tier: i32,
     pub xp: i32,
 }
@@ -15,25 +17,25 @@ impl Friend{
     pub fn faint(&self, friendly_friends: &mut Vec<Friend>, idx: i32) -> (){
         let lvl = (self.xp / 3) + 1;
         
-        if self.name == "ant".to_string(){
+        if self.id == shop::ANT{
             let rand_num = rand::thread_rng().gen_range(0..friendly_friends.len());
             println!("ant fainting, rand idx ={}", rand_num);
             friendly_friends[rand_num as usize].attack += 2 * lvl;
             friendly_friends[rand_num as usize].health += 1 * lvl;
         }
 
-        if self.name == "cricket".to_string(){
+        if self.id == shop::CRICKET{
             let zombie_cricket = Friend{
                 attack: 1 * lvl,
                 health: 1 * lvl,
-                name: "zombie_cricket".to_string(),
+                id: 100,
                 tier: 1,
                 xp: 1,
             };
             friendly_friends.insert(idx as usize,zombie_cricket);
         }
 
-        if self.name == "flamingo".to_string(){
+        if self.id == shop::FLAMINGO{
             if idx - 1 >= 0{
                 friendly_friends[(idx - 1) as usize].attack += 1 * lvl;
                 friendly_friends[(idx - 1) as usize].health += 1 * lvl;
@@ -49,7 +51,7 @@ impl Friend{
     pub fn buy(&self, friendly_friends: &mut Vec<Friend>, _idx: i32) -> (){
         let lvl = (self.xp / 3) + 1;
 
-        if self.name == "otter".to_string(){
+        if self.id == shop::OTTER{
             if friendly_friends.len() <= 2{
                 for i in 0..friendly_friends.len(){
                     friendly_friends[i].attack += 1 * lvl;
@@ -70,12 +72,3 @@ impl Friend{
 
     }
 }
-
-
-pub static ant100: Friend = Friend{
-    attack: 2,
-    health: 1,
-    name: Lazy::new(||{"ant".to_string()}),
-    tier: 1,
-    xp: 1,
-};
