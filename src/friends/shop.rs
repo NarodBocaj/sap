@@ -38,6 +38,7 @@ pub struct Shop{
     pub turn_num: i32,
     pub frozen: Vec<Friend>,
     pub for_sale: Vec<Friend>,
+    pub lvl_up: Vec<Friend>,
 }
 
 // impl Shop{

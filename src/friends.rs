@@ -1,4 +1,4 @@
-mod shop;
+pub mod shop;
 
 use rand::Rng;
 
