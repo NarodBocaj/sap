@@ -26,3 +26,5 @@ Large remaining things to do:
     Implement food
     Shop system
     Round system and fighting
+    Joinging pets together
+    Shop effect on level up

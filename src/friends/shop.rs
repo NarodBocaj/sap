@@ -1,4 +1,5 @@
 use crate::friends::Friend;
+
 //counts
 //tier 1: 9     idxs: 0-8
 //tier 2: 10    idxs: 9-18
@@ -50,13 +51,3 @@ pub struct Shop{
 //         //takes and idx from for_sale vec and adds it here
 //     }
 // }
-
-pub fn friend_maker(id: i32) -> Friend{
-    return Friend{
-        attack: PETS[id as usize][1],
-        health: PETS[id as usize][2],
-        id: id,
-        tier: 1, //need to make a tier calculator
-        xp: 1,
-    }
-}

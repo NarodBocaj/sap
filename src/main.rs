@@ -1,5 +1,5 @@
 mod friends;
-mod shop;
+
 //mod animals;
 
 fn main() {
@@ -7,7 +7,7 @@ fn main() {
     let mut lives: i32 = 5;
     let mut trophies: i32 = 0;
 
-    let mut ant = shop::friend_maker(shop::ANT);
+    let mut ant = friends::friend_maker(0);
 
     friendly_friends.push(ant);    
 
@@ -22,6 +22,7 @@ fn main() {
 fn print_friends(friendly_friends: & Vec<friends::Friend>) -> (){
     for i in 0..friendly_friends.len(){
         println!("{} {}/{}", friendly_friends[i].id, friendly_friends[i].attack, friendly_friends[i].health);
+        //id attack/health
     }
 }
 
