@@ -5,8 +5,8 @@ use rand::Rng;
 
 //#[derive(Clone)]
 pub struct Friend{
-    pub attack: i32,
-    pub health: i32,
+    pub attack: i32,//need to implement temp added attack
+    pub health: i32,//need to implement temp added health I think?
     pub id: i32,
     pub tier: i32,
     pub xp: i32,
