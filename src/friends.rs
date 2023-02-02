@@ -82,4 +82,3 @@ pub fn friend_maker(id: i32) -> Friend{
         xp: 1,
     }
 }
-

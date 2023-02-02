@@ -25,39 +25,36 @@ fn print_friends(friendly_friends: & Vec<friends::Friend>) -> (){
     }
 }
 
-fn battle(friendly_friends: &mut Vec<friends::Friend>, enemy_friends: &mut Vec<friends::Friend>, trophies: &mut i32, lives: &mut i32) -> (){
+fn battle(my_friends: &mut Vec<friends::Friend>, opp_friends: &mut Vec<friends::Friend>, trophies: &mut i32, lives: &mut i32) -> (){
     //need to figure out how to deep copy these vecs
 
-    while friendly_friends.len() > 0 && enemy_friends.len() > 0{
+    while my_friends.len() > 0 && opp_friends.len() > 0{
         //make them battle
-        let my_attack = friendly_friends[0].attack;
-        let opp_attack = enemy_friends[0].attack;
-        
-        friendly_friends[0].health -= opp_attack;
-        enemy_friends[0].health -= my_attack;
-        
-        if friendly_friends[0].health < 1{
-            let my_faint = (friendly_friends.pop()).unwrap();
-            my_faint.faint(friendly_friends, 0); //idx placeholder for right now
-        }
-        else{
-            //run the .hurt ability
-        }
+        let my_attack = my_friends[0].attack;
+        let opp_attack = opp_friends[0].attack;
 
-        if enemy_friends[0].health < 1{
-            let opp_faint = (enemy_friends.pop()).unwrap();
-            opp_faint.faint(enemy_friends, 0); //idx placeholder for right now
-        }
-        else{
-            //run the .hurt ability
-        }
+        do_dmg(my_friends, opp_attack, 0);
+        do_dmg(opp_friends, my_attack, 0);
 
     }
 
-    if friendly_friends.len() > 0{
+    if my_friends.len() > 0{
         *trophies += 1;
     }
-    else if friendly_friends.len() == 0 && enemy_friends.len() > 0{
+    else if my_friends.len() == 0 && opp_friends.len() > 0{
         *lives -= 1; //situation where both vecs have len == 0 is a tie and nothing happens
+    }
+}
+
+fn do_dmg(team: &mut Vec<friends::Friend>, dmg: i32, idx: usize) -> (){
+    team[idx].health -= dmg;
+    if team[idx].health < 1{
+        let fainted_pet = team.remove(idx);
+        fainted_pet.faint(team, 0);
+    }
+    else{
+        //run the hurt ability
+        //also need to make sure fainting is complete before running the hurt ability
+        //maybe return an alive indicator so the hurt ability is run after
     }
 }
