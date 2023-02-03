@@ -36,15 +36,15 @@ impl Friend{
             };
             friendly_friends.insert(idx as usize,zombie_cricket);
         }
-        //***flamingo needs to be fixed to assume 0 is frontline
+
         if self.id == shop::FLAMINGO{
-            if idx - 1 >= 0{
-                friendly_friends[(idx - 1) as usize].attack += 1 * lvl;
-                friendly_friends[(idx - 1) as usize].health += 1 * lvl;
+            if friendly_friends.len() > 0{
+                friendly_friends[idx as usize].attack += 1 * lvl;
+                friendly_friends[idx as usize].health += 1 * lvl;
             }
-            if idx - 2 >= 0{
-                friendly_friends[(idx - 2) as usize].attack += 1 * lvl;
-                friendly_friends[(idx - 2) as usize].health += 1 * lvl;
+            if friendly_friends.len() > 1{
+                friendly_friends[(idx + 1) as usize].attack += 1 * lvl;
+                friendly_friends[(idx + 1) as usize].health += 1 * lvl;
             }
         }
     }
