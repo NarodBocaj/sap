@@ -24,7 +24,10 @@ Pets that may not need there on impl:
 
 Large remaining things to do:
     Implement food
-    Shop system
+    Shop system - pretty much done except for food
     Round system and fighting
     Joinging pets together
     Shop effect on level up
+
+Links:
+    linking Python to Rust - https://developers.redhat.com/blog/2017/11/16/speed-python-using-rust#what_is_rust_
