@@ -41,7 +41,7 @@ pub const RABBIT: i32 = 27;
 pub const SHEEP: i32 = 28;
 pub const SNAIL: i32 = 29;
 
-pub const PETS: [(i32, i32, i32, &str); 19] = [
+pub const PETS: [(i32, i32, i32, &str); 30] = [
     //id, attack, health
     (ANT, 2, 1, "ant"),
     (BEAVER, 3, 2, "beaver"),
