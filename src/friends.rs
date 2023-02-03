@@ -3,7 +3,7 @@ pub mod shop;
 use rand::Rng;
 
 
-//#[derive(Clone)]
+#[derive(Clone)]
 pub struct Friend{
     pub attack: i32,//need to implement temp added attack
     pub health: i32,//need to implement temp added health I think?
@@ -18,10 +18,12 @@ impl Friend{
         let lvl = (self.xp / 3) + 1;
         
         if self.id == shop::ANT{
-            let rand_num = rand::thread_rng().gen_range(0..friendly_friends.len());
-            println!("ant fainting, rand idx ={}", rand_num);
-            friendly_friends[rand_num as usize].attack += 2 * lvl;
-            friendly_friends[rand_num as usize].health += 1 * lvl;
+            if friendly_friends.len() > 0{
+                let rand_num = rand::thread_rng().gen_range(0..friendly_friends.len());
+                println!("ant fainting, rand idx ={}", rand_num);
+                friendly_friends[rand_num as usize].attack += 2 * lvl;
+                friendly_friends[rand_num as usize].health += 1 * lvl;
+            }
         }
 
         if self.id == shop::CRICKET{
