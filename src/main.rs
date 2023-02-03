@@ -21,7 +21,7 @@ fn main() {
     // dead_pet.faint(&mut friendly_friends, 3);
     
     let mut shop = friends::shop::Shop{
-        turn_num: 1,
+        turn_num: 3,
         frozen: Vec::new(),
         for_sale: Vec::new(),
         lvl_up: Vec::new(),

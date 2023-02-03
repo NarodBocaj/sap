@@ -20,8 +20,28 @@ pub const MOSQUITO: i32 = 6;
 pub const OTTER: i32 = 7;
 pub const PIG: i32 = 8;
 pub const FLAMINGO: i32 = 9;
+pub const CRAB: i32 = 10;
+pub const DODO: i32 = 11;
+pub const ELEPHANT: i32 = 12;
+pub const HEDGEHOG: i32 = 13;
+pub const PEACOCK: i32 = 14;
+pub const RAT: i32 = 15;
+pub const SHRIMP: i32 = 16;
+pub const SPIDER: i32 = 17;
+pub const SWAN: i32 = 18;
+pub const BADGER: i32 = 19;
+pub const BLOWFISH: i32 = 20;
+pub const CAMEL: i32 = 21;
+pub const DOG: i32 = 22;
+pub const DOLPHIN: i32 = 23;
+pub const GIRAFFE: i32 = 24;
+pub const KANGAROO: i32 = 25;
+pub const OX: i32 = 26;
+pub const RABBIT: i32 = 27;
+pub const SHEEP: i32 = 28;
+pub const SNAIL: i32 = 29;
 
-pub const PETS: [(i32, i32, i32, &str); 10] = [
+pub const PETS: [(i32, i32, i32, &str); 19] = [
     //id, attack, health
     (ANT, 2, 1, "ant"),
     (BEAVER, 3, 2, "beaver"),
@@ -33,6 +53,26 @@ pub const PETS: [(i32, i32, i32, &str); 10] = [
     (OTTER, 1, 2, "otter"),
     (PIG, 4, 1, "pig"),
     (FLAMINGO, 4, 2, "flamingo"),
+    (CRAB, 3, 1, "crab"),
+    (DODO, 3, 3, "dodo"),
+    (ELEPHANT, 3, 5, "elephant"),
+    (HEDGEHOG, 3, 2, "hedgehog"),
+    (PEACOCK, 2, 5, "peacock"),
+    (RAT, 4, 5, "rat"),
+    (SHRIMP, 2, 3, "shrimp"),
+    (SPIDER, 2, 2, "spider"),
+    (SWAN, 1, 3, "swan"),
+    (BADGER, 5, 3, "badger"),
+    (BLOWFISH, 3, 5, "blowfish"),
+    (CAMEL, 2, 6, "camel"),
+    (DOG, 3, 4, "dog"),
+    (DOLPHIN, 4, 3, "dolphin"),
+    (GIRAFFE, 1, 3, "giraffe"),
+    (KANGAROO, 1, 2, "kangaroo"),
+    (OX, 1, 3, "ox"),
+    (RABBIT, 1, 2, "rabbit"),
+    (SHEEP, 2, 2, "sheep"),
+    (SNAIL, 2, 2, "snail"),
 ];
 
 pub struct Shop{
