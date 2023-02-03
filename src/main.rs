@@ -8,10 +8,13 @@ fn main() {
     let mut trophies: i32 = 0;
 
     let mut ant = friends::friend_maker(friends::shop::ANT);
+    let mut antant = friends::friend_maker(friends::shop::ANT);
     let mut ant1 = friends::friend_maker(friends::shop::ANT);
     let mut duck = friends::friend_maker(friends::shop::DUCK);
-
-    friendly_friends.push(ant);    
+    let mut flamingo = friends::friend_maker(friends::shop::FLAMINGO);
+    friendly_friends.push(flamingo);
+    friendly_friends.push(ant);
+    friendly_friends.push(antant);
     enemy_friends.push(ant1);
     enemy_friends.push(duck);
     // let dead_pet: friends::Friend = (friendly_friends.pop()).unwrap();
@@ -23,49 +26,22 @@ fn main() {
 
     battle(&mut my_friends_copy, &mut opp_friends_copy, &mut trophies, &mut lives);
 
+    let mut shop = friends::shop::Shop{
+        turn_num: 1,
+        frozen: Vec::new(),
+        for_sale: Vec::new(),
+        lvl_up: Vec::new(),
+    };
+
+    shop.roll();
+    print_shop(&shop);
+    shop.freeze(2);
+    print_shop(&shop);
+    shop.roll();
+    print_shop(&shop);
     //print_friends(&friendly_friends);
 }
 
-fn print_friends(friendly_friends: & Vec<friends::Friend>) -> (){
-    println!("Printing current my team: id attack/health");
-    for i in 0..friendly_friends.len(){
-        //id attack/health
-        println!("{} {}/{}", friendly_friends[i].id, friendly_friends[i].attack, friendly_friends[i].health);
-    }
-}
-
-fn print_battle_state(my_friends: & Vec<friends::Friend>, opp_friends: & Vec<friends::Friend>) -> String{
-    println!("Printing Battle State");
-    let mut battle_string: String = "".to_string();
-
-    let my_friends_len = my_friends.len();
-    let opp_friends_len = opp_friends.len();
-
-    for i in 0..my_friends_len{
-        let name = friends::shop::PETS[(my_friends[(my_friends_len - 1 - i) as usize].id) as usize].3;
-        let attack = my_friends[(my_friends_len - 1 - i) as usize].attack;
-        let health = my_friends[(my_friends_len - 1 - i) as usize].health;
-        let mut comma = ",";
-        if i == 0{
-            comma = "";
-        }
-        battle_string += &format!("{}({}/{}){}", name, attack, health, comma);
-    }
-
-    battle_string += &" ||| ".to_string(); 
-    
-    for i in 0..opp_friends_len{
-        let name = friends::shop::PETS[(opp_friends[i as usize].id) as usize].3;
-        let attack = opp_friends[i as usize].attack;
-        let health = opp_friends[i as usize].health;
-        let mut comma = ", ";
-        if i == opp_friends_len - 1{
-            comma = "";
-        }
-        battle_string += &format!("{}({}/{}){}", name, attack, health, comma);
-    }
-    return battle_string
-}
 
 fn battle(my_friends: &mut Vec<friends::Friend>, opp_friends: &mut Vec<friends::Friend>, trophies: &mut i32, lives: &mut i32) -> (){
     //need to figure out how to deep copy these vecs
@@ -109,4 +85,65 @@ fn do_dmg(team: &mut Vec<friends::Friend>, dmg: i32, idx: usize) -> (){
         //also need to make sure fainting is complete before running the hurt ability
         //maybe return an alive indicator so the hurt ability is run after
     }
+}
+
+fn print_friends(friendly_friends: & Vec<friends::Friend>) -> (){
+    println!("Printing current my team: id attack/health");
+    for i in 0..friendly_friends.len(){
+        //id attack/health
+        println!("{} {}/{}", friendly_friends[i].id, friendly_friends[i].attack, friendly_friends[i].health);
+    }
+}
+
+fn print_battle_state(my_friends: & Vec<friends::Friend>, opp_friends: & Vec<friends::Friend>) -> String{
+    //println!("Printing Battle State");
+    let mut battle_string: String = "".to_string();
+
+    let my_friends_len = my_friends.len();
+    let opp_friends_len = opp_friends.len();
+
+    for i in 0..my_friends_len{
+        let name = friends::shop::PETS[(my_friends[(my_friends_len - 1 - i) as usize].id) as usize].3;
+        let attack = my_friends[(my_friends_len - 1 - i) as usize].attack;
+        let health = my_friends[(my_friends_len - 1 - i) as usize].health;
+        let mut comma = ", ";
+        if i == my_friends_len - 1{
+            comma = "";
+        }
+        battle_string += &format!("{}({}/{}){}", name, attack, health, comma);
+    }
+
+    battle_string += &" ||| ".to_string(); 
+    
+    for i in 0..opp_friends_len{
+        let name = friends::shop::PETS[(opp_friends[i as usize].id) as usize].3;
+        let attack = opp_friends[i as usize].attack;
+        let health = opp_friends[i as usize].health;
+        let mut comma = ", ";
+        if i == opp_friends_len - 1{
+            comma = "";
+        }
+        battle_string += &format!("{}({}/{}){}", name, attack, health, comma);
+    }
+    return battle_string
+}
+
+fn print_shop(shop: &friends::shop::Shop) -> (){
+    let mut shop_string: String = "".to_string();
+    for friend in &shop.for_sale{
+        let name = friends::shop::PETS[(friend.id) as usize].3;
+        let attack = friend.attack;
+        let health = friend.health;
+        shop_string += &format!("{}({}/{}) | ", name, attack, health);
+    }
+    println!("For Sale: {}", shop_string);
+    
+    let mut frozen_string: String = "".to_string();
+    for friend in &shop.frozen{
+        let name = friends::shop::PETS[(friend.id) as usize].3;
+        let attack = friend.attack;
+        let health = friend.health;
+        frozen_string += &format!("{}({}/{}) | ", name, attack, health);
+    }
+    println!("Frozen: {}", frozen_string);
 }

@@ -3,7 +3,7 @@ pub mod shop;
 use rand::Rng;
 
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct Friend{
     pub attack: i32,//need to implement temp added attack
     pub health: i32,//need to implement temp added health I think?
@@ -20,7 +20,7 @@ impl Friend{
         if self.id == shop::ANT{
             if friendly_friends.len() > 0{
                 let rand_num = rand::thread_rng().gen_range(0..friendly_friends.len());
-                println!("ant fainting, rand idx ={}", rand_num);
+                println!("ant fainting, rand idx = {}", rand_num);
                 friendly_friends[rand_num as usize].attack += 2 * lvl;
                 friendly_friends[rand_num as usize].health += 1 * lvl;
             }
@@ -36,7 +36,7 @@ impl Friend{
             };
             friendly_friends.insert(idx as usize,zombie_cricket);
         }
-
+        //***flamingo needs to be fixed to assume 0 is frontline
         if self.id == shop::FLAMINGO{
             if idx - 1 >= 0{
                 friendly_friends[(idx - 1) as usize].attack += 1 * lvl;
@@ -80,7 +80,28 @@ pub fn friend_maker(id: i32) -> Friend{
         attack: shop::PETS[id as usize].1,
         health: shop::PETS[id as usize].2,
         id: id,
-        tier: 1, //need to make a tier calculator
+        tier: tier_calc(id),
         xp: 1,
+    }
+}
+
+pub fn tier_calc(id: i32) -> i32{
+    if id < 9{
+        return 1
+    }
+    else if id < 19{
+        return 2
+    }
+    else if id < 30{
+        return 3
+    }
+    else if id < 41{
+        return 4
+    }
+    else if id < 49{
+        return 5
+    }
+    else{
+        return 6
     }
 }
