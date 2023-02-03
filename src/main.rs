@@ -34,12 +34,37 @@ fn print_friends(friendly_friends: & Vec<friends::Friend>) -> (){
     }
 }
 
-fn print_enemies(opp_friends: & Vec<friends::Friend>) -> (){
-    println!("Printing current opp team: id attack/health");
-    for i in 0..opp_friends.len(){
-        //id attack/health
-        println!("{} {}/{}", opp_friends[i].id, opp_friends[i].attack, opp_friends[i].health);
+fn print_battle_state(my_friends: & Vec<friends::Friend>, opp_friends: & Vec<friends::Friend>) -> String{
+    println!("Printing Battle State");
+    let mut battle_string: String = "".to_string();
+
+    let my_friends_len = my_friends.len();
+    let opp_friends_len = opp_friends.len();
+
+    for i in 0..my_friends_len{
+        let name = friends::shop::PETS[(my_friends[(my_friends_len - 1 - i) as usize].id) as usize].3;
+        let attack = my_friends[(my_friends_len - 1 - i) as usize].attack;
+        let health = my_friends[(my_friends_len - 1 - i) as usize].health;
+        let mut comma = ",";
+        if i == 0{
+            comma = "";
+        }
+        battle_string += &format!("{}({}/{}){}", name, attack, health, comma);
     }
+
+    battle_string += &" ||| ".to_string(); 
+    
+    for i in 0..opp_friends_len{
+        let name = friends::shop::PETS[(opp_friends[i as usize].id) as usize].3;
+        let attack = opp_friends[i as usize].attack;
+        let health = opp_friends[i as usize].health;
+        let mut comma = ", ";
+        if i == opp_friends_len - 1{
+            comma = "";
+        }
+        battle_string += &format!("{}({}/{}){}", name, attack, health, comma);
+    }
+    return battle_string
 }
 
 fn battle(my_friends: &mut Vec<friends::Friend>, opp_friends: &mut Vec<friends::Friend>, trophies: &mut i32, lives: &mut i32) -> (){
@@ -47,8 +72,9 @@ fn battle(my_friends: &mut Vec<friends::Friend>, opp_friends: &mut Vec<friends::
 
     while my_friends.len() > 0 && opp_friends.len() > 0{
         //make them battle
-        print_friends(my_friends);
-        print_enemies(opp_friends);
+        //print_friends(my_friends);
+        //print_enemies(opp_friends);
+        println!("{}", print_battle_state(my_friends, opp_friends));
 
         let my_attack = my_friends[0].attack;
         let opp_attack = opp_friends[0].attack;
@@ -57,8 +83,7 @@ fn battle(my_friends: &mut Vec<friends::Friend>, opp_friends: &mut Vec<friends::
         do_dmg(opp_friends, my_attack, 0);
     }
     println!("Final Team State");
-    print_friends(my_friends);
-    print_enemies(opp_friends);
+    println!("{}", print_battle_state(my_friends, opp_friends));
 
     if my_friends.len() > 0{
         *trophies += 1;

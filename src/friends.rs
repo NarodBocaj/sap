@@ -77,8 +77,8 @@ impl Friend{
 
 pub fn friend_maker(id: i32) -> Friend{
     return Friend{
-        attack: shop::PETS[id as usize][1],
-        health: shop::PETS[id as usize][2],
+        attack: shop::PETS[id as usize].1,
+        health: shop::PETS[id as usize].2,
         id: id,
         tier: 1, //need to make a tier calculator
         xp: 1,

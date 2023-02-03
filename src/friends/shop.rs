@@ -20,18 +20,18 @@ pub const OTTER: i32 = 7;
 pub const PIG: i32 = 8;
 pub const FLAMINGO: i32 = 9;
 
-pub const PETS: [[i32; 3]; 10] = [
+pub const PETS: [(i32, i32, i32, &str); 10] = [
     //id, attack, health
-    [ANT, 2, 1],
-    [BEAVER, 3, 2],
-    [CRICKET, 1, 2],
-    [DUCK, 2, 3],
-    [FISH, 2, 2],
-    [HORSE, 2, 1],
-    [MOSQUITO, 2, 2],
-    [OTTER, 1, 2],
-    [PIG, 4, 1],
-    [FLAMINGO, 4, 2],
+    (ANT, 2, 1, "ant"),
+    (BEAVER, 3, 2, "beaver"),
+    (CRICKET, 1, 2, "cricket"),
+    (DUCK, 2, 3, "duck"),
+    (FISH, 2, 2, "fish"),
+    (HORSE, 2, 1, "horse"),
+    (MOSQUITO, 2, 2, "mosquito"),
+    (OTTER, 1, 2, "otter"),
+    (PIG, 4, 1, "pig"),
+    (FLAMINGO, 4, 2, "flamingo"),
 ];
 
 pub struct Shop{
