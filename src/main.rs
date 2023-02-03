@@ -19,26 +19,28 @@ fn main() {
     enemy_friends.push(duck);
     // let dead_pet: friends::Friend = (friendly_friends.pop()).unwrap();
     // dead_pet.faint(&mut friendly_friends, 3);
-
-
-    let mut my_friends_copy = friendly_friends.clone();
-    let mut opp_friends_copy = enemy_friends.clone();
-
-    battle(&mut my_friends_copy, &mut opp_friends_copy, &mut trophies, &mut lives);
-
+    
     let mut shop = friends::shop::Shop{
         turn_num: 1,
         frozen: Vec::new(),
         for_sale: Vec::new(),
         lvl_up: Vec::new(),
     };
-
     shop.roll();
-    print_shop(&shop);
     shop.freeze(2);
     print_shop(&shop);
     shop.roll();
     print_shop(&shop);
+    shop.buy(&mut friendly_friends, 0);
+
+    let mut my_friends_copy = friendly_friends.clone();
+    let mut opp_friends_copy = enemy_friends.clone();
+
+    battle(&mut my_friends_copy, &mut opp_friends_copy, &mut trophies, &mut lives);
+
+
+
+
     //print_friends(&friendly_friends);
 }
 

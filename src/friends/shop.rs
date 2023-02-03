@@ -70,6 +70,11 @@ impl Shop{
         let mut new_frozen_friend = self.for_sale.remove(idx);
         self.frozen.push(new_frozen_friend);
     }
+
+    pub fn buy(&mut self, team: &mut Vec<Friend>, idx:usize) -> (){
+        let mut bought_friend = self.for_sale.remove(idx);
+        team.push(bought_friend);
+    }
 }
 
 pub fn turn_num_to_shopcnt_shoprng(turn_num: i32) -> (i32, i32){
