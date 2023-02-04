@@ -25,7 +25,7 @@ Pets that may not need there on impl:
 Large remaining things to do:
     Implement food
     Shop system - pretty much done except for food
-    Round system and fighting
+    Round system and fighting - pretty much done (maybe make a game class/function)
     Joinging pets together
     Shop effect on level up
 
