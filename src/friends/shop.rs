@@ -10,39 +10,39 @@ use rand::Rng;
 //tier 6: 9     idxs: 49-57
 //total 58
 //need different id's for summons, zombie cricket is currently 100
-pub const ANT: i32 = 0;
-pub const BEAVER: i32 = 1;
-pub const CRICKET: i32 = 2;
-pub const DUCK: i32 = 3;
-pub const FISH: i32 = 4;
-pub const HORSE: i32 = 5;
-pub const MOSQUITO: i32 = 6;
-pub const OTTER: i32 = 7;
-pub const PIG: i32 = 8;
-pub const FLAMINGO: i32 = 9;
-pub const CRAB: i32 = 10;
-pub const DODO: i32 = 11;
-pub const ELEPHANT: i32 = 12;
-pub const HEDGEHOG: i32 = 13;
-pub const PEACOCK: i32 = 14;
-pub const RAT: i32 = 15;
-pub const SHRIMP: i32 = 16;
-pub const SPIDER: i32 = 17;
-pub const SWAN: i32 = 18;
-pub const BADGER: i32 = 19;
-pub const BLOWFISH: i32 = 20;
-pub const CAMEL: i32 = 21;
-pub const DOG: i32 = 22;
-pub const DOLPHIN: i32 = 23;
-pub const GIRAFFE: i32 = 24;
-pub const KANGAROO: i32 = 25;
-pub const OX: i32 = 26;
-pub const RABBIT: i32 = 27;
-pub const SHEEP: i32 = 28;
-pub const SNAIL: i32 = 29;
+pub const ANT: i32 = 0; //tier 1
+pub const BEAVER: i32 = 1; //tier 1
+pub const CRICKET: i32 = 2; //tier 1
+pub const DUCK: i32 = 3; //tier 1
+pub const FISH: i32 = 4; //tier 1
+pub const HORSE: i32 = 5; //tier 1
+pub const MOSQUITO: i32 = 6; //tier 1
+pub const OTTER: i32 = 7; //tier 1
+pub const PIG: i32 = 8; //tier 1
+pub const FLAMINGO: i32 = 9; //tier 2
+pub const CRAB: i32 = 10; //tier 2
+pub const DODO: i32 = 11; //tier 2
+pub const ELEPHANT: i32 = 12; //tier 2
+pub const HEDGEHOG: i32 = 13; //tier 2
+pub const PEACOCK: i32 = 14; //tier 2
+pub const RAT: i32 = 15; //tier 2
+pub const SHRIMP: i32 = 16; //tier 2
+pub const SPIDER: i32 = 17; //tier 2
+pub const SWAN: i32 = 18; //tier 2
+pub const BADGER: i32 = 19; //tier 3
+pub const BLOWFISH: i32 = 20; //tier 3
+pub const CAMEL: i32 = 21; //tier 3
+pub const DOG: i32 = 22; //tier 3
+pub const DOLPHIN: i32 = 23; //tier 3
+pub const GIRAFFE: i32 = 24; //tier 3
+pub const KANGAROO: i32 = 25; //tier 3
+pub const OX: i32 = 26; //tier 3
+pub const RABBIT: i32 = 27; //tier 3
+pub const SHEEP: i32 = 28; //tier 3
+pub const SNAIL: i32 = 29; //tier 3
 
 pub const PETS: [(i32, i32, i32, &str); 30] = [
-    //id, attack, health
+    //id, attack, health, name
     (ANT, 2, 1, "ant"),
     (BEAVER, 3, 2, "beaver"),
     (CRICKET, 1, 2, "cricket"),

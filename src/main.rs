@@ -7,15 +7,18 @@ fn main() {
     let mut lives: i32 = 5;
     let mut trophies: i32 = 0;
 
-    let mut ant = friends::friend_maker(friends::shop::ANT);
-    let mut antant = friends::friend_maker(friends::shop::ANT);
     let mut ant1 = friends::friend_maker(friends::shop::ANT);
+    let mut ant2 = friends::friend_maker(friends::shop::ANT);
+    let mut ant3 = friends::friend_maker(friends::shop::ANT);
+    let mut ant = friends::friend_maker(friends::shop::ANT);
     let mut duck = friends::friend_maker(friends::shop::DUCK);
     let mut flamingo = friends::friend_maker(friends::shop::FLAMINGO);
+    let combo_ant = ant1 + ant2;
+    let combo_ant = combo_ant + ant3;
     friendly_friends.push(flamingo);
-    friendly_friends.push(ant);
-    friendly_friends.push(antant);
-    enemy_friends.push(ant1);
+    friendly_friends.push(combo_ant);
+    //friendly_friends.push(antant);
+    enemy_friends.push(ant);
     enemy_friends.push(duck);
     // let dead_pet: friends::Friend = (friendly_friends.pop()).unwrap();
     // dead_pet.faint(&mut friendly_friends, 3);

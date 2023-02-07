@@ -1,7 +1,8 @@
 pub mod shop;
 
 use rand::Rng;
-
+use std::ops::Add;
+use std::cmp;
 
 #[derive(Clone, Copy)]
 pub struct Friend{
@@ -72,6 +73,20 @@ impl Friend{
         }
 
 
+    }
+}
+
+impl Add for Friend{        //should function be banned for pets with diff ids?? how to handle when xp is greater than lvl 3??
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self{
+            attack: cmp::max(self.attack, other.attack) + 1,
+            health: cmp::max(self.health, other.health) + 1,
+            id: self.id,
+            tier: self.tier,
+            xp: self.xp + other.xp,
+        }
     }
 }
 
