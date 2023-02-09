@@ -78,7 +78,7 @@ impl Friend{
 
 impl Add for Friend{        //should function be banned for pets with diff ids?? how to handle when xp is greater than lvl 3??
     type Output = Self;
-
+    //should add check here within add that see's if a lvl up occurs and then calls lvl up on shop
     fn add(self, other: Self) -> Self {
         Self{
             attack: cmp::max(self.attack, other.attack) + 1,
