@@ -6,7 +6,6 @@ fn main() {
     let mut enemy_friends = vec![];
     let mut lives: i32 = 5;
     let mut trophies: i32 = 0;
-
     //testing
     let mut ant1 = friends::friend_maker(friends::shop::ANT);
     let mut ant2 = friends::friend_maker(friends::shop::ANT);
