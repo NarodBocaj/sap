@@ -7,7 +7,7 @@ use std::cmp;
 #[derive(Clone, Copy)]
 pub struct Friend{
     pub attack: i32,//need to implement temp added attack
-    pub health: i32,//need to implement temp added health I think?
+    pub health: i32,//need to implement temp added health I think? Other option is to only apply temp buffs to clone
     pub id: i32,
     pub tier: i32,
     pub xp: i32,
@@ -119,4 +119,13 @@ pub fn tier_calc(id: i32) -> i32{
     else{
         return 6
     }
+}
+
+#[derive(Clone, Copy)]
+pub struct Food{
+    id: i32,
+}
+
+impl Food{
+
 }

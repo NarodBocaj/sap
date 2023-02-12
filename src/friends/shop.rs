@@ -1,5 +1,6 @@
 use crate::friends::Friend;
 use crate::friends::friend_maker;
+use crate::friends::Food;
 use rand::Rng;
 //counts
 //tier 1: 9     idxs: 0-8
@@ -80,6 +81,8 @@ pub struct Shop{
     pub frozen: Vec<Friend>,
     pub for_sale: Vec<Friend>,
     pub lvl_up: Vec<Friend>,//place holder for the lvlup logic of higher tier pet in shop
+    pub food: Vec<Food>,
+    pub frozen_food: Vec<Food>,
 }
 
 impl Shop{
@@ -118,6 +121,7 @@ impl Shop{
 }
 
 pub fn turn_num_to_shopcnt_shoprng(turn_num: i32) -> (i32, i32){
+    //returning (how many animals are the shop, max animal int in the range)
     //game will start on turn 1
     //will return number for range 0..current max shop int
     //non-inclusive
@@ -140,3 +144,20 @@ pub fn turn_num_to_shopcnt_shoprng(turn_num: i32) -> (i32, i32){
         return (5, 58)
     }
 }
+
+pub const APPLE: i32 = 0;   //tier 1
+pub const HONEY: i32 = 1;   //tier 1
+pub const PILL: i32 = 2;    //tier 2
+pub const CUPCAKE: i32 = 3; //tier 2
+pub const MEATBONE: i32 = 4;//tier 2
+pub const SALAD: i32 = 5;   //tier 3
+pub const GARLIC: i32 = 6;   //tier 3
+pub const CANNEDFOOD: i32 = 7;//tier 4
+pub const PEAR: i32 = 8;    //tier 4
+pub const CHILI: i32 = 9;   //tier 5
+pub const CHOCOLATE: i32 = 10;//tier 5
+pub const SUSHI: i32 = 11;  //tier 5
+pub const MELON: i32 = 12;  //tier 6
+pub const MUSHROOM: i32 = 13;//tier 6
+pub const PIZZA: i32 = 14;  //tier 6
+pub const STEAK: i32 = 15;  //tier 6
