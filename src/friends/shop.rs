@@ -90,22 +90,36 @@ impl Shop{
         //beginning of every turn should begin with turn_num += 1
         //then a roll
         
-        //emptying sale vec
+        //emptying sale vec and food vec
         self.for_sale.clear();
+        self.food.clear();
         
         //filling it with frozen pets from last round
         for friend in &self.frozen{
             self.for_sale.push(*friend);
         }
-        //empyting frozen vec
+
+        //filling it with frozen food from last round
+        for fud in &self.frozen_food{
+            self.food.push(*fud);
+        }
+        //empyting frozen vecs
         self.frozen.clear();
+        self.frozen_food.clear();
         //getting turn info
-        let (shop_size, shop_range) = turn_num_to_shopcnt_shoprng(self.turn_num);
-        //filling remaining shop
+        let (shop_size, shop_range, food_range) = turn_num_to_ranges(self.turn_num);
+        //filling remaining shop with pets then food
         for _ in self.for_sale.len()..shop_size as usize{
             let rand_num = rand::thread_rng().gen_range(0..shop_range);
             let mut created_friend = friend_maker(rand_num);
             self.for_sale.push(created_friend);
+        }
+        for _ in self.food.len()..2{
+            let rand_num = rand::thread_rng().gen_range(0..food_range);
+            let mut created_food = Food{
+                id: rand_num,
+            };
+            self.food.push(created_food);
         }
     }
 
@@ -114,34 +128,40 @@ impl Shop{
         self.frozen.push(new_frozen_friend);
     }
 
+    //this is the buy friend function, should change the name
     pub fn buy(&mut self, team: &mut Vec<Friend>, idx:usize) -> (){
         let mut bought_friend = self.for_sale.remove(idx);
         team.push(bought_friend);
     }
+
+    pub fn freeze_food(&mut self, idx: usize) -> (){
+        let new_frozen_food = self.food.remove(idx);
+        self.frozen_food.push(new_frozen_food);
+    }
 }
 
-pub fn turn_num_to_shopcnt_shoprng(turn_num: i32) -> (i32, i32){
-    //returning (how many animals are the shop, max animal int in the range)
+pub fn turn_num_to_ranges(turn_num: i32) -> (i32, i32, i32){
+    //returning (how many animals are the shop, max animal int in the range, max food int)
     //game will start on turn 1
     //will return number for range 0..current max shop int
     //non-inclusive
     if turn_num < 3{
-        return (3, 9)
+        return (3, 9, 2)
     }
     else if turn_num < 5{
-        return (3, 19)
+        return (3, 19, 5)
     }
     else if turn_num < 7{
-        return (4, 30)
+        return (4, 30, 7)
     }
     else if turn_num < 9{
-        return (4, 41)
+        return (4, 41, 9)
     }
     else if turn_num < 11{
-        return (5, 49)
+        return (5, 49, 12)
     }
     else{
-        return (5, 58)
+        return (5, 58, 16)
     }
 }
 

@@ -28,6 +28,8 @@ fn main() {
         frozen: Vec::new(),
         for_sale: Vec::new(),
         lvl_up: Vec::new(),
+        food: Vec::new(),
+        frozen_food: Vec::new(),
     };
     shop.roll();
     shop.freeze(2);

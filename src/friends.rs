@@ -127,5 +127,8 @@ pub struct Food{
 }
 
 impl Food{
-
+//food should have attribute like add to pet that firstly checks what food it is
+//if something like pill, it will call faint on that pet
+//if pear gives buff to that pet
+//if garlic gives pet held food with that id
 }
