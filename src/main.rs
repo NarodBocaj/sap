@@ -7,12 +7,12 @@ fn main() {
     let mut lives: i32 = 5;
     let mut trophies: i32 = 0;
     //testing
-    let mut ant1 = friends::friend_maker(friends::shop::ANT);
-    let mut ant2 = friends::friend_maker(friends::shop::ANT);
-    let mut ant3 = friends::friend_maker(friends::shop::ANT);
-    let mut ant = friends::friend_maker(friends::shop::ANT);
-    let mut duck = friends::friend_maker(friends::shop::DUCK);
-    let mut flamingo = friends::friend_maker(friends::shop::FLAMINGO);
+    let mut ant1 = friends::friend_maker(friends::shop::ANT, 0);
+    let mut ant2 = friends::friend_maker(friends::shop::ANT, 0);
+    let mut ant3 = friends::friend_maker(friends::shop::ANT, 0);
+    let mut ant = friends::friend_maker(friends::shop::ANT, 0);
+    let mut duck = friends::friend_maker(friends::shop::DUCK, 0);
+    let mut flamingo = friends::friend_maker(friends::shop::FLAMINGO, 0);
     let combo_ant = ant1 + ant2;
     let combo_ant = combo_ant + ant3;
     friendly_friends.push(flamingo);
@@ -30,6 +30,7 @@ fn main() {
         lvl_up: Vec::new(),
         food: Vec::new(),
         frozen_food: Vec::new(),
+        canned_food_cnt: 0,
     };
     shop.roll();
     shop.freeze(2);

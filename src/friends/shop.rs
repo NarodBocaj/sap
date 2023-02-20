@@ -83,6 +83,7 @@ pub struct Shop{
     pub lvl_up: Vec<Friend>,//place holder for the lvlup logic of higher tier pet in shop
     pub food: Vec<Food>,
     pub frozen_food: Vec<Food>,
+    pub canned_food_cnt: i32,
 }
 
 impl Shop{
@@ -111,7 +112,7 @@ impl Shop{
         //filling remaining shop with pets then food
         for _ in self.for_sale.len()..shop_size as usize{
             let rand_num = rand::thread_rng().gen_range(0..shop_range);
-            let mut created_friend = friend_maker(rand_num);
+            let mut created_friend = friend_maker(rand_num, self.canned_food_cnt);
             self.for_sale.push(created_friend);
         }
         for _ in self.food.len()..2{
@@ -137,6 +138,11 @@ impl Shop{
     pub fn freeze_food(&mut self, idx: usize) -> (){
         let new_frozen_food = self.food.remove(idx);
         self.frozen_food.push(new_frozen_food);
+    }
+
+    pub fn buy_food(&mut self, shop_idx: usize, friend_idx: usize) -> (){
+        //need to ban chocolate purchases for friends already of lvl3
+        let bought_food = self.food.remove(shop_idx);
     }
 }
 

@@ -2,7 +2,8 @@ pub mod shop;
 
 use rand::Rng;
 use std::ops::Add;
-use std::cmp;
+use std::{thread_rng, Rng};
+use rand::distributions::Uniform;
 
 #[derive(Clone, Copy)]
 pub struct Friend{
@@ -11,6 +12,7 @@ pub struct Friend{
     pub id: i32,
     pub tier: i32,
     pub xp: i32,
+    pub food_id: i32,//maybe should make food based buff attributes
 }
 
 
@@ -90,13 +92,14 @@ impl Add for Friend{        //should function be banned for pets with diff ids??
     }
 }
 
-pub fn friend_maker(id: i32) -> Friend{
+pub fn friend_maker(id: i32, canned_food_cnt: i32) -> Friend{
     return Friend{
-        attack: shop::PETS[id as usize].1,
-        health: shop::PETS[id as usize].2,
+        attack: shop::PETS[id as usize].1 + canned_food_cnt,
+        health: shop::PETS[id as usize].2 + canned_food_cnt,
         id: id,
         tier: tier_calc(id),
         xp: 1,
+        food_id: -1,
     }
 }
 
@@ -131,4 +134,104 @@ impl Food{
 //if something like pill, it will call faint on that pet
 //if pear gives buff to that pet
 //if garlic gives pet held food with that id
+    pub fn give_food(&self, friendly_friends: &mut Vec<Friend>,shop: &mut shop::Shop, idx: usize) -> () {
+        //check all the food ids to give appropriate affect
+        if self.id == 0{//apple
+            friendly_friends[idx].health += 1;
+            friendly_friends[idx].attack += 1;
+        }
+        else if self.id == 1{//honey
+            //figure out how to handle honey
+        }
+        else if self.id == 2{//pill
+            //faint pet, I think I should write fill faint function
+        }
+        else if self.id == 3{//cupcake
+            //temp buff with cupcake
+        }
+        else if self.id == 4{//meatbone
+            friendly_friends[idx].food_id = self.id;
+        }
+        else if self.id == 5{//salad
+            if friendly_friends.len() < 2{
+                if friendly_friends.len() == 1{
+                    friendly_friends[0].attack += 1;
+                    friendly_friends[0].health += 1;
+                }
+                return
+            }
+            let mut rng = thread_rng();
+            let rand_nums = rand::seq::index::sample(&mut rng, friendly_friends.len(), 2).into_vec();
+            for i in rand_nums as usize{
+                friendly_friends[i].attack += 1;
+                friendly_friends[i].health += 1;
+            }
+        }
+        else if self.id == 6{//garlic
+            friendly_friends[idx].food_id = self.id;
+        }
+        else if self.id == 7{//canned food
+            shop.canned_food_cnt += 1;
+            for friend in shop.for_sale{
+                friend.attack += 1;
+                friend.health += 1;
+            }
+        }
+        else if self.id == 8{//pear
+            friendly_friends[idx].attack += 2;
+            friendly_friends[idx].health += 2;
+        }
+        else if self.id == 9{//chili
+            friendly_friends[idx].food_id == self.id;
+        }
+        else if self.id == 10{//chocolate
+            friendly_friends[idx].xp += 1;
+            //need to check if lvlup effect happens
+        }
+        else if self.id == 11{//sushi
+            if friendly_friends.len() < 3{
+                if friendly_friends.len() == 2{
+                    friendly_friends[0].attack += 1;
+                    friendly_friends[0].health += 1;
+                    friendly_friends[1].attack += 1;
+                    friendly_friends[1].health += 1;
+                }
+                else if friendly_friends.len() == 1{
+                    friendly_friends[0].attack += 1;
+                    friendly_friends[0].health += 1;
+                }
+                return
+            }
+            let mut rng = thread_rng();
+            let rand_nums = rand::seq::index::sample(&mut rng, friendly_friends.len(), 3).into_vec();
+            for i in rand_nums as usize{
+                friendly_friends[i].attack += 1;
+                friendly_friends[i].health += 1;
+            }
+        }
+        else if self.id == 12{//melon
+            friendly_friends[idx].food_id == self.id;
+        }
+        else if self.id == 13{//mushroom
+            friendly_friends[idx].food_id == self.id;
+        }
+        else if self.id == 14{//pizza
+            if friendly_friends.len() < 2{
+                if friendly_friends.len() == 1{
+                    friendly_friends[0].attack += 2;
+                    friendly_friends[0].health += 2;
+                }
+                return
+            }
+            let mut rng = thread_rng();
+            let rand_nums = rand::seq::index::sample(&mut rng, friendly_friends.len(), 2).into_vec();
+            for i in rand_nums as usize{
+                friendly_friends[i].attack += 2;
+                friendly_friends[i].health += 2;
+            }
+        }
+        else if self.id == 15{//steak
+            friendly_friends[idx].food_id = self.id;
+        }
+    }
 }
