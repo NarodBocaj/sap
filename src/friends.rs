@@ -1,9 +1,9 @@
 pub mod shop;
 
-use rand::Rng;
 use std::ops::Add;
-use std::{thread_rng, Rng};
-use rand::distributions::Uniform;
+use rand::{thread_rng, Rng};
+//use rand::distributions::Uniform;
+use std::cmp;
 
 #[derive(Clone, Copy)]
 pub struct Friend{
@@ -36,6 +36,7 @@ impl Friend{
                 id: 100,
                 tier: 1,
                 xp: 1,
+                food_id: -1,
             };
             friendly_friends.insert(idx as usize,zombie_cricket);
         }
@@ -88,6 +89,7 @@ impl Add for Friend{        //should function be banned for pets with diff ids??
             id: self.id,
             tier: self.tier,
             xp: self.xp + other.xp,
+            food_id: self.food_id,
         }
     }
 }
@@ -134,7 +136,7 @@ impl Food{
 //if something like pill, it will call faint on that pet
 //if pear gives buff to that pet
 //if garlic gives pet held food with that id
-    pub fn give_food(&self, friendly_friends: &mut Vec<Friend>,shop: &mut shop::Shop, idx: usize) -> () {
+    pub fn give_food(&self, friendly_friends: &mut Vec<Friend>, shop: &mut shop::Shop, idx: usize) -> () {
         //check all the food ids to give appropriate affect
         if self.id == 0{//apple
             friendly_friends[idx].health += 1;
@@ -162,7 +164,7 @@ impl Food{
             }
             let mut rng = thread_rng();
             let rand_nums = rand::seq::index::sample(&mut rng, friendly_friends.len(), 2).into_vec();
-            for i in rand_nums as usize{
+            for i in rand_nums.iter().map(|&x| x as usize){
                 friendly_friends[i].attack += 1;
                 friendly_friends[i].health += 1;
             }
@@ -172,7 +174,7 @@ impl Food{
         }
         else if self.id == 7{//canned food
             shop.canned_food_cnt += 1;
-            for friend in shop.for_sale{
+            for mut friend in &mut shop.for_sale{
                 friend.attack += 1;
                 friend.health += 1;
             }
@@ -182,7 +184,7 @@ impl Food{
             friendly_friends[idx].health += 2;
         }
         else if self.id == 9{//chili
-            friendly_friends[idx].food_id == self.id;
+            friendly_friends[idx].food_id = self.id;
         }
         else if self.id == 10{//chocolate
             friendly_friends[idx].xp += 1;
@@ -204,16 +206,16 @@ impl Food{
             }
             let mut rng = thread_rng();
             let rand_nums = rand::seq::index::sample(&mut rng, friendly_friends.len(), 3).into_vec();
-            for i in rand_nums as usize{
+            for i in rand_nums.iter().map(|&x| x as usize){
                 friendly_friends[i].attack += 1;
                 friendly_friends[i].health += 1;
             }
         }
         else if self.id == 12{//melon
-            friendly_friends[idx].food_id == self.id;
+            friendly_friends[idx].food_id = self.id;
         }
         else if self.id == 13{//mushroom
-            friendly_friends[idx].food_id == self.id;
+            friendly_friends[idx].food_id = self.id;
         }
         else if self.id == 14{//pizza
             if friendly_friends.len() < 2{
@@ -225,7 +227,7 @@ impl Food{
             }
             let mut rng = thread_rng();
             let rand_nums = rand::seq::index::sample(&mut rng, friendly_friends.len(), 2).into_vec();
-            for i in rand_nums as usize{
+            for i in rand_nums.iter().map(|&x| x as usize){
                 friendly_friends[i].attack += 2;
                 friendly_friends[i].health += 2;
             }
