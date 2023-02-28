@@ -1,11 +1,27 @@
 mod friends;
 
-
 fn main() {
     let mut friendly_friends = vec![];
     let mut enemy_friends = vec![];
     let mut lives: i32 = 5;
     let mut trophies: i32 = 0;
+
+    let mut game = Game{
+        wins: 0,
+        lives: 5,
+        turnnum: 1,
+        friendly_friends: Vec::new(),
+        shop: friends::shop::Shop{
+            turn_num: 1,//remove this when game fn works, all shop fucntions should use game.turnnum
+            frozen: Vec::new(),
+            for_sale: Vec::new(),
+            lvl_up: Vec::new(),
+            food: Vec::new(),
+            frozen_food: Vec::new(),
+            canned_food_cnt: 0,  
+        },
+    };
+
     //testing
     let mut ant1 = friends::friend_maker(friends::shop::ANT, 0);
     let mut ant2 = friends::friend_maker(friends::shop::ANT, 0);
@@ -20,8 +36,7 @@ fn main() {
     //friendly_friends.push(antant);
     enemy_friends.push(ant);
     enemy_friends.push(duck);
-    // let dead_pet: friends::Friend = (friendly_friends.pop()).unwrap();
-    // dead_pet.faint(&mut friendly_friends, 3);
+
     
     let mut shop = friends::shop::Shop{
         turn_num: 3,
@@ -32,27 +47,29 @@ fn main() {
         frozen_food: Vec::new(),
         canned_food_cnt: 0,
     };
-    shop.roll();
-    shop.freeze(2);
-    print_shop(&shop);
-    shop.roll();
-    print_shop(&shop);
-    shop.buy(&mut friendly_friends, 0);
+    
+    // shop.roll();
+    // shop.freeze(2);
+    // print_shop(&shop);
+    // shop.roll();
+    // print_shop(&shop);
+    // shop.buy(&mut friendly_friends, 0);
+
+    game.shop.roll();
+    print_shop(&game.shop);
+
 
     let mut my_friends_copy = friendly_friends.clone();
     let mut opp_friends_copy = enemy_friends.clone();
 
     battle(&mut my_friends_copy, &mut opp_friends_copy, &mut trophies, &mut lives);
 
-
-
-
     //print_friends(&friendly_friends);
 }
 
 
 fn battle(my_friends: &mut Vec<friends::Friend>, opp_friends: &mut Vec<friends::Friend>, trophies: &mut i32, lives: &mut i32) -> (){
-    //need to figure out how to deep copy these vecs
+    //run start of battle ability for all pets
 
     while my_friends.len() > 0 && opp_friends.len() > 0{
         //make them battle
@@ -62,9 +79,11 @@ fn battle(my_friends: &mut Vec<friends::Friend>, opp_friends: &mut Vec<friends::
 
         let my_attack = my_friends[0].attack;
         let opp_attack = opp_friends[0].attack;
-
-        do_dmg(my_friends, opp_attack, 0);
-        do_dmg(opp_friends, my_attack, 0);
+        
+        //need to know food situation too 
+        do_dmg(my_friends, opp_attack, 0);//my team recieving dmg | should call appropriate friend ahead fns
+        do_dmg(opp_friends, my_attack, 0);//opps team recieving dmg | should call appropriate friend ahead fns
+        //I believe some kind of hurt queue is prudent here
     }
     println!("Final Team State");
     println!("{}", print_battle_state(my_friends, opp_friends));
@@ -154,4 +173,26 @@ fn print_shop(shop: &friends::shop::Shop) -> (){
         frozen_string += &format!("{}({}/{}) | ", name, attack, health);
     }
     println!("Frozen: {}", frozen_string);
+}
+
+pub struct Game{
+    pub wins: i32,
+    pub lives: i32,
+    pub turnnum: i32,
+    pub friendly_friends: Vec<friends::Friend>,
+    pub shop: friends::shop::Shop,
+}
+
+impl Game{
+    //functions for game
+    //Function to Get game state, this function should only have a python output
+    //Funciton to give all the possible actions to python
+    //Function to do the action (roll shop, freeze shop, buy from shop, sell from pets, move pets, combine pets)
+    //Function to go to battle
+        //battle consists of the following
+        //Getting team on same turn cloning games team and running the battle function
+        //giving the result to python for reward for the RL
+        //incrementing turn number
+        //rolling the shop
+        //runs fucntions 1 and 2 again
 }

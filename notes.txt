@@ -30,4 +30,5 @@ Large remaining things to do:
     Shop effect on level up
 
 Links:
-    linking Python to Rust - https://developers.redhat.com/blog/2017/11/16/speed-python-using-rust#what_is_rust_
+    linking Python to Rust - https://developers.redhat.com/blog/2017/11/16/speed-python-using-rust#
+    reinforcement learning vid - https://www.youtube.com/watch?v=Mut_u40Sqz4
