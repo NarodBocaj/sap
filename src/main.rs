@@ -1,7 +1,10 @@
+use cpython::{Python, PyResult};
+
 mod friends;
 
+
 fn main() {
-    let mut friendly_friends = vec![];
+    //let mut friendly_friends = vec![];
     let mut enemy_friends = vec![];
     let mut lives: i32 = 5;
     let mut trophies: i32 = 0;
@@ -18,8 +21,10 @@ fn main() {
             lvl_up: Vec::new(),
             food: Vec::new(),
             frozen_food: Vec::new(),
-            canned_food_cnt: 0,  
+            canned_food_cnt: 0,
         },
+        lost_lst_rnd: false,
+        actions_remaining: 50,
     };
 
     //testing
@@ -31,8 +36,8 @@ fn main() {
     let mut flamingo = friends::friend_maker(friends::shop::FLAMINGO, 0);
     let combo_ant = ant1 + ant2;
     let combo_ant = combo_ant + ant3;
-    friendly_friends.push(flamingo);
-    friendly_friends.push(combo_ant);
+    game.friendly_friends.push(flamingo);
+    game.friendly_friends.push(combo_ant);
     //friendly_friends.push(antant);
     enemy_friends.push(ant);
     enemy_friends.push(duck);
@@ -48,18 +53,13 @@ fn main() {
         canned_food_cnt: 0,
     };
     
-    // shop.roll();
-    // shop.freeze(2);
-    // print_shop(&shop);
-    // shop.roll();
-    // print_shop(&shop);
-    // shop.buy(&mut friendly_friends, 0);
-
     game.shop.roll();
     print_shop(&game.shop);
 
+    println!("Printing the Game State");
+    println!("{:?}", game.game_state());
 
-    let mut my_friends_copy = friendly_friends.clone();
+    let mut my_friends_copy = game.friendly_friends.clone();
     let mut opp_friends_copy = enemy_friends.clone();
 
     battle(&mut my_friends_copy, &mut opp_friends_copy, &mut trophies, &mut lives);
@@ -181,10 +181,12 @@ pub struct Game{
     pub turnnum: i32,
     pub friendly_friends: Vec<friends::Friend>,
     pub shop: friends::shop::Shop,
+    pub lost_lst_rnd: bool,
+    pub actions_remaining: i32,
 }
 
 impl Game{
-    //functions for game
+    //List of fns for Game
     //Function to Get game state, this function should only have a python output
     //Funciton to give all the possible actions to python
     //Function to do the action (roll shop, freeze shop, buy from shop, sell from pets, move pets, combine pets)
@@ -195,4 +197,62 @@ impl Game{
         //incrementing turn number
         //rolling the shop
         //runs fucntions 1 and 2 again
+
+
+    pub fn game_state(&self) -> Vec<i32> {
+        let mut state_vec: Vec<i32> = Vec::new();
+        for i in 0..5{//getting all of the team info
+            if i < self.friendly_friends.len(){
+                let idx = i as usize;
+                let temp_pet = self.friendly_friends[idx];
+                state_vec.push(temp_pet.id);
+                state_vec.push(temp_pet.attack);
+                state_vec.push(temp_pet.health);
+                state_vec.push(temp_pet.xp);
+                state_vec.push(temp_pet.food_id);
+            }
+            else{
+                for _ in 0..5{
+                    state_vec.push(-64);
+                }
+            }
+        }
+        for friend in &self.shop.for_sale{//adding all the non-frozen pets
+            state_vec.push(friend.id);
+            state_vec.push(friend.attack);
+            state_vec.push(friend.health);
+            state_vec.push(friend.tier);
+            state_vec.push(0);//frozen status
+        }
+        for friend in &self.shop.frozen{//adding all the frozen pets
+            state_vec.push(friend.id);
+            state_vec.push(friend.attack);
+            state_vec.push(friend.health);
+            state_vec.push(friend.tier);
+            state_vec.push(1);//frozen status
+        }
+        for _ in (self.shop.frozen.len() + self.shop.for_sale.len())..6{//adding fillers for missing shop slots
+            for x in 0..5{
+                state_vec.push(1024);
+            }
+        }
+        for fud in &self.shop.food{//adding non-frozen food
+            state_vec.push(fud.id);
+            state_vec.push(0);//frozen status
+        }
+        for fud in &self.shop.frozen_food{//adding frozen food
+            state_vec.push(fud.id);
+            state_vec.push(1);//frozen status
+        }
+        if self.lost_lst_rnd{
+            state_vec.push(1);
+        }
+        else{
+            state_vec.push(0);
+        }
+        state_vec.push(self.shop.canned_food_cnt);
+        state_vec.push(self.actions_remaining);
+        return state_vec
+    }
+    
 }

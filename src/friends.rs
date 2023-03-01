@@ -128,7 +128,7 @@ pub fn tier_calc(id: i32) -> i32{
 
 #[derive(Clone, Copy)]
 pub struct Food{
-    id: i32,
+    pub id: i32,
 }
 
 impl Food{
