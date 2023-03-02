@@ -255,4 +255,23 @@ impl Game{
         return state_vec
     }
     
+
+    pub fn game_options(&self) -> Vec<Vec<i32>> {
+        //need codes for all different options
+
+        //unclear if it will be neccesary to give all pet info with option or just index
+
+        //-1 will be sell
+        //1 will be buy to open slot
+        //2 will be buy to combine with certain index
+        //3 will be buy food to certain index
+        //4 will be freeze pet at index
+        //5 will be freeze food at index
+        //6 will be roll
+        //7 will be swap pets and will take two indices (it will only be allowed to swap adjacent pets)
+        //8 will be go to battle and will only be allowed when money is out and will be forced when remaining actions gets to 0
+    }
+
+    //need function that takes action choice from python then executes it
+
 }
