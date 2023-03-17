@@ -13,6 +13,7 @@ fn main() {
         wins: 0,
         lives: 5,
         turnnum: 1,
+        money: 10,
         friendly_friends: Vec::new(),
         shop: friends::shop::Shop{
             turn_num: 1,//remove this when game fn works, all shop fucntions should use game.turnnum
@@ -179,6 +180,7 @@ pub struct Game{
     pub wins: i32,
     pub lives: i32,
     pub turnnum: i32,
+    pub money: i32,
     pub friendly_friends: Vec<friends::Friend>,
     pub shop: friends::shop::Shop,
     pub lost_lst_rnd: bool,
@@ -256,20 +258,61 @@ impl Game{
     }
     
 
-    pub fn game_options(&self) -> Vec<Vec<i32>> {
+    pub fn game_options(&self) -> Vec<Vec<i32>> {//***NOTE, need to add restriction if out of actions to only allow go to battle
         //need codes for all different options
-
-        //unclear if it will be neccesary to give all pet info with option or just index
+        
+        //format will be [code for option, idx 1 affected (-1 if none), idx 2 affected (-1 if none)]
 
         //-1 will be sell
         //1 will be buy to open slot
         //2 will be buy to combine with certain index
         //3 will be buy food to certain index
-        //4 will be freeze pet at index
-        //5 will be freeze food at index
+        //4 will be freeze shop pet at index
+        //5 will be freeze shop food at index
         //6 will be roll
         //7 will be swap pets and will take two indices (it will only be allowed to swap adjacent pets)
-        //8 will be go to battle and will only be allowed when money is out and will be forced when remaining actions gets to 0
+        //8 will be combine team pets together
+        //9 will be go to battle and will only be allowed when money is out and will be forced when remaining actions gets to 0
+        let mut opts_vec = Vec::new(); 
+        for idx in 0..self.friendly_friends.len(){//things that can be sold -1
+            opts_vec.push(vec![-1, idx as i32, -1]);
+        }
+
+        if self.money > 2{
+            if self.friendly_friends.len() < 5{//things that can be bought to open slot 1
+                for idx in 0..self.shop.for_sale.len(){
+                    opts_vec.push(vec![1, idx as i32, -1]);
+                }
+            }
+
+            for i in 0..self.shop.for_sale.len(){//things that can be bought to combine 2
+                for j in 0..self.friendly_friends.len(){
+                    if self.shop.for_sale[i].id == self.friendly_friends[j].id{
+                        opts_vec.push(vec![2, i as i32, j as i32]);
+                    }
+                }
+            }
+
+            for i in 0..self.shop.food.len(){//food that can bought 3
+                for j in 0..self.friendly_friends.len(){
+                    opts_vec.push(vec![3, j as i32, i as i32]);
+                }
+            }
+        }
+
+        for idx in 0..self.shop.for_sale.len(){//pet that can be frozen 4
+            opts_vec.push(vec![4, idx as i32, -1]);
+        }
+
+        for idx in 0..self.shop.food.len(){//food that can be frozen 5
+            opts_vec.push(vec![5, idx as i32, -1]);
+        }
+
+        if self.money > 0{//roll the shop 6
+            opts_vec.push(vec![6, -1 , -1]);
+        }
+
+        return opts_vec
     }
 
     //need function that takes action choice from python then executes it
