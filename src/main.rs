@@ -59,6 +59,8 @@ fn main() {
 
     println!("Printing the Game State");
     println!("{:?}", game.game_state());
+    println!("Printing Options Vec");
+    println!("{:?}", game.game_options());
 
     let mut my_friends_copy = game.friendly_friends.clone();
     let mut opp_friends_copy = enemy_friends.clone();
@@ -273,43 +275,63 @@ impl Game{
         //7 will be swap pets and will take two indices (it will only be allowed to swap adjacent pets)
         //8 will be combine team pets together
         //9 will be go to battle and will only be allowed when money is out and will be forced when remaining actions gets to 0
-        let mut opts_vec = Vec::new(); 
-        for idx in 0..self.friendly_friends.len(){//things that can be sold -1
-            opts_vec.push(vec![-1, idx as i32, -1]);
-        }
+        let mut opts_vec = Vec::new();
 
-        if self.money > 2{
-            if self.friendly_friends.len() < 5{//things that can be bought to open slot 1
-                for idx in 0..self.shop.for_sale.len(){
-                    opts_vec.push(vec![1, idx as i32, -1]);
-                }
+        if self.actions_remaining > 0{
+            for idx in 0..self.friendly_friends.len(){//things that can be sold -1
+                opts_vec.push(vec![-1, idx as i32, -1]);
             }
 
-            for i in 0..self.shop.for_sale.len(){//things that can be bought to combine 2
-                for j in 0..self.friendly_friends.len(){
-                    if self.shop.for_sale[i].id == self.friendly_friends[j].id{
-                        opts_vec.push(vec![2, i as i32, j as i32]);
+            if self.money > 2{
+                if self.friendly_friends.len() < 5{//things that can be bought to open slot 1
+                    for idx in 0..self.shop.for_sale.len(){
+                        opts_vec.push(vec![1, idx as i32, -1]);
+                    }
+                }
+
+                for i in 0..self.shop.for_sale.len(){//things that can be bought to combine 2
+                    for j in 0..self.friendly_friends.len(){
+                        if self.shop.for_sale[i].id == self.friendly_friends[j].id{
+                            opts_vec.push(vec![2, i as i32, j as i32]);
+                        }
+                    }
+                }
+
+                for i in 0..self.shop.food.len(){//food that can bought 3
+                    for j in 0..self.friendly_friends.len(){
+                        opts_vec.push(vec![3, j as i32, i as i32]);
                     }
                 }
             }
 
-            for i in 0..self.shop.food.len(){//food that can bought 3
-                for j in 0..self.friendly_friends.len(){
-                    opts_vec.push(vec![3, j as i32, i as i32]);
+            for idx in 0..self.shop.for_sale.len(){//pet that can be frozen 4
+                opts_vec.push(vec![4, idx as i32, -1]);
+            }
+
+            for idx in 0..self.shop.food.len(){//food that can be frozen 5
+                opts_vec.push(vec![5, idx as i32, -1]);
+            }
+
+            if self.money > 0{//roll the shop 6
+                opts_vec.push(vec![6, -1 , -1]);
+            }
+
+            for idx in 0..self.friendly_friends.len() - 1{//swap pets 7
+                opts_vec.push(vec![7, idx as i32, (idx + 1) as i32]);
+            }
+
+            for i in 0..self.friendly_friends.len() - 1{//combine pets on team 8
+                for j in i + 1..self.friendly_friends.len(){
+                    if self.friendly_friends[i].id == self.friendly_friends[j].id && self.friendly_friends[i].xp + self.friendly_friends[j].xp <= 6{//pets can only be combined if they add up to lvl 3 or less    
+                        opts_vec.push(vec![8, i as i32, j as i32]);//combine i on j
+                        opts_vec.push(vec![8, j as i32, i as i32]);//combine j on i
+                    }
                 }
             }
         }
 
-        for idx in 0..self.shop.for_sale.len(){//pet that can be frozen 4
-            opts_vec.push(vec![4, idx as i32, -1]);
-        }
-
-        for idx in 0..self.shop.food.len(){//food that can be frozen 5
-            opts_vec.push(vec![5, idx as i32, -1]);
-        }
-
-        if self.money > 0{//roll the shop 6
-            opts_vec.push(vec![6, -1 , -1]);
+        if self.money == 0 || self.actions_remaining == 0{//go to battle
+            opts_vec.push(vec![9, -1 , -1]);
         }
 
         return opts_vec
