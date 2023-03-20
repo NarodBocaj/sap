@@ -9,24 +9,7 @@ fn main() {
     let mut lives: i32 = 5;
     let mut trophies: i32 = 0;
 
-    let mut game = Game{
-        wins: 0,
-        lives: 5,
-        turnnum: 1,
-        money: 10,
-        friendly_friends: Vec::new(),
-        shop: friends::shop::Shop{
-            turn_num: 1,//remove this when game fn works, all shop fucntions should use game.turnnum
-            frozen: Vec::new(),
-            for_sale: Vec::new(),
-            lvl_up: Vec::new(),
-            food: Vec::new(),
-            frozen_food: Vec::new(),
-            canned_food_cnt: 0,
-        },
-        lost_lst_rnd: false,
-        actions_remaining: 50,
-    };
+    let mut game = Game::new();
 
     //testing
     let mut ant1 = friends::friend_maker(friends::shop::ANT, 0);
@@ -201,7 +184,26 @@ impl Game{
         //incrementing turn number
         //rolling the shop
         //runs fucntions 1 and 2 again
-
+    pub fn new() -> Self{
+        Game {
+            wins: 0,
+            lives: 5,
+            turnnum: 1,
+            money: 10,
+            friendly_friends: Vec::new(),
+            shop: friends::shop::Shop{
+                turn_num: 1,//remove this when game fn works, all shop fucntions should use game.turnnum
+                frozen: Vec::new(),
+                for_sale: Vec::new(),
+                lvl_up: Vec::new(),
+                food: Vec::new(),
+                frozen_food: Vec::new(),
+                canned_food_cnt: 0,
+            },
+            lost_lst_rnd: false,
+            actions_remaining: 50,
+        }
+    }
 
     pub fn game_state(&self) -> Vec<i32> {
         let mut state_vec: Vec<i32> = Vec::new();
