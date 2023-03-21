@@ -1,68 +1,13 @@
 // extern crate cpython;
 // use cpython::{Python, PyResult};
+
 use pyo3::prelude::*;
 
 
-mod friends;
+pub mod friends;
 
 
-fn main() {
-    let mut enemy_friends = vec![];
-    let mut lives: i32 = 5;
-    let mut trophies: i32 = 0;
-
-    let mut game = Game::new();
-
-    //testing
-    let mut ant1 = friends::friend_maker(friends::shop::ANT, 0);
-    let mut ant2 = friends::friend_maker(friends::shop::ANT, 0);
-    let mut ant3 = friends::friend_maker(friends::shop::ANT, 0);
-    let mut ant = friends::friend_maker(friends::shop::ANT, 0);
-    let mut duck = friends::friend_maker(friends::shop::DUCK, 0);
-    let mut flamingo = friends::friend_maker(friends::shop::FLAMINGO, 0);
-    let combo_ant = ant1 + ant2;
-    let combo_ant = combo_ant + ant3;
-    game.friendly_friends.push(flamingo);
-    game.friendly_friends.push(combo_ant);
-    //friendly_friends.push(antant);
-    enemy_friends.push(ant);
-    enemy_friends.push(duck);
-
-    
-    game.shop.roll();
-    print_shop(&game.shop);
-
-    println!("Printing the Game State");
-    println!("{:?}", game.game_state());
-    println!("Printing Options Vec");
-    println!("{:?}", game.game_options());
-
-    let mut my_friends_copy = game.friendly_friends.clone();
-    let mut opp_friends_copy = enemy_friends.clone();
-
-    battle(&mut my_friends_copy, &mut opp_friends_copy, &mut trophies, &mut lives);
-
-    //print_friends(&friendly_friends);
-
-
-    // create Python module
-    // let gil = Python::acquire_gil();
-    // let py = gil.python();
-    // let module = py.import("__main__").unwrap();
-    // let game_module = py.import("game").unwrap();
-
-    // // expose Game struct to Python
-    // let game_class = py.get_type::<Game>(game_module.get(py, "Game").unwrap()).unwrap();
-    // py.setattr(game_module, "Game", game_class).unwrap();
-
-    // // expose other functions to Python here
-
-    // // use Game struct in Python
-    // let game = game_class.call(py, (), None).unwrap().extract::<Game>(py).unwrap();
-}
-
-
-fn battle(my_friends: &mut Vec<friends::Friend>, opp_friends: &mut Vec<friends::Friend>, trophies: &mut i32, lives: &mut i32) -> (){
+pub fn battle(my_friends: &mut Vec<friends::Friend>, opp_friends: &mut Vec<friends::Friend>, trophies: &mut i32, lives: &mut i32) -> (){
     //run start of battle ability for all pets
 
     while my_friends.len() > 0 && opp_friends.len() > 0{
@@ -108,7 +53,7 @@ fn do_dmg(team: &mut Vec<friends::Friend>, dmg: i32, idx: usize) -> (){
     }
 }
 
-fn print_friends(friendly_friends: & Vec<friends::Friend>) -> (){
+pub fn print_friends(friendly_friends: & Vec<friends::Friend>) -> (){
     println!("Printing current my team: id attack/health");
     for i in 0..friendly_friends.len(){
         //id attack/health
@@ -149,7 +94,7 @@ fn print_battle_state(my_friends: & Vec<friends::Friend>, opp_friends: & Vec<fri
     return battle_string
 }
 
-fn print_shop(shop: &friends::shop::Shop) -> (){
+pub fn print_shop(shop: &friends::shop::Shop) -> (){
     let mut shop_string: String = "".to_string();
     for friend in &shop.for_sale{
         let name = friends::shop::PETS[(friend.id) as usize].3;

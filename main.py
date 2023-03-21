@@ -5,11 +5,11 @@ import cPython
 sys.path.append(str(Path(__file__).resolve().parent / "target" / "release"))
 
 
-import sap #my rust code
+import libsap #my rust code
 
 class PyGame:
     def __init__(self):
-        self.game = sap.Game.new()
+        self.game = libsap.Game.new()
 
     def game_state(self):
         return self.game.game_state()
