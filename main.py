@@ -9,7 +9,7 @@ import libsap #my rust code
 
 # class PySAP:
 #     def __init__(self):
-#         self.game = libsap.Game.new()
+#         self.game = libsap.Game()
 
 #     def game_state(self):
 #         return self.game.game_state()
@@ -20,3 +20,18 @@ import libsap #my rust code
 # game = PySAP()
 
 print(libsap.hello())
+# pysap = libsap.Game.__new__(libsap.Game)
+# pysap.__init__()
+
+pysap = libsap.Game()
+# pysap.__init__()
+# pysap.__new__
+
+print(pysap.game_state())
+print(pysap.game_options())
+
+
+
+# print("Printing Attributes")
+# for attr in dir(pysap):
+#     print(f"{attr}: {getattr(pysap, attr)}")

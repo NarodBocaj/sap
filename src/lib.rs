@@ -114,6 +114,7 @@ pub fn print_shop(shop: &friends::shop::Shop) -> (){
     println!("Frozen: {}", frozen_string);
 }
 
+#[pyclass]
 pub struct Game{
     pub wins: i32,
     pub lives: i32,
@@ -125,6 +126,7 @@ pub struct Game{
     pub actions_remaining: i32,
 }
 
+#[pymethods]
 impl Game{
     //List of fns for Game
     //Function to Get game state, this function should only have a python output
@@ -137,28 +139,23 @@ impl Game{
         //incrementing turn number
         //rolling the shop
         //runs fucntions 1 and 2 again
+    #[new]
     pub fn new() -> Self{
+        println!("Creating Game Instance");
         Game {
             wins: 0,
             lives: 5,
             turnnum: 1,
             money: 10,
             friendly_friends: Vec::new(),
-            shop: friends::shop::Shop{
-                turn_num: 1,//remove this when game fn works, all shop fucntions should use game.turnnum
-                frozen: Vec::new(),
-                for_sale: Vec::new(),
-                lvl_up: Vec::new(),
-                food: Vec::new(),
-                frozen_food: Vec::new(),
-                canned_food_cnt: 0,
-            },
+            shop: friends::shop::Shop::new(),
             lost_lst_rnd: false,
             actions_remaining: 50,
         }
     }
 
-    pub fn game_state(&self) -> Vec<i32> {
+    pub fn game_state(&self) -> PyResult<Vec<i32>> {//need to add wins and lives remaining
+        println!("Game State");
         let mut state_vec: Vec<i32> = Vec::new();
         for i in 0..5{//getting all of the team info
             if i < self.friendly_friends.len(){
@@ -211,11 +208,11 @@ impl Game{
         }
         state_vec.push(self.shop.canned_food_cnt);
         state_vec.push(self.actions_remaining);
-        return state_vec
+        Ok(state_vec)
     }
     
 
-    pub fn game_options(&self) -> Vec<Vec<i32>> {//***NOTE, need to add restriction if out of actions to only allow go to battle
+    pub fn game_options(&self) -> PyResult<Vec<Vec<i32>>> {//***NOTE, need to add restriction if out of actions to only allow go to battle
         //need codes for all different options
         
         //format will be [code for option, idx 1 affected (-1 if none), idx 2 affected (-1 if none)]
@@ -231,12 +228,12 @@ impl Game{
         //8 will be combine team pets together
         //9 will be go to battle and will only be allowed when money is out and will be forced when remaining actions gets to 0
         let mut opts_vec = Vec::new();
-
+ 
         if self.actions_remaining > 0{
             for idx in 0..self.friendly_friends.len(){//things that can be sold -1
                 opts_vec.push(vec![-1, idx as i32, -1]);
             }
-
+   
             if self.money > 2{
                 if self.friendly_friends.len() < 5{//things that can be bought to open slot 1
                     for idx in 0..self.shop.for_sale.len(){
@@ -271,15 +268,17 @@ impl Game{
                 opts_vec.push(vec![6, -1 , -1]);
             }
 
-            for idx in 0..self.friendly_friends.len() - 1{//swap pets 7
-                opts_vec.push(vec![7, idx as i32, (idx + 1) as i32]);
-            }
+            if self.friendly_friends.len() > 0{
+                for idx in 0..self.friendly_friends.len() - 1{//swap pets 7
+                    opts_vec.push(vec![7, idx as i32, (idx + 1) as i32]);
+                }
 
-            for i in 0..self.friendly_friends.len() - 1{//combine pets on team 8
-                for j in i + 1..self.friendly_friends.len(){
-                    if self.friendly_friends[i].id == self.friendly_friends[j].id && self.friendly_friends[i].xp + self.friendly_friends[j].xp <= 6{//pets can only be combined if they add up to lvl 3 or less    
-                        opts_vec.push(vec![8, i as i32, j as i32]);//combine i on j
-                        opts_vec.push(vec![8, j as i32, i as i32]);//combine j on i
+                for i in 0..self.friendly_friends.len() - 1{//combine pets on team 8
+                    for j in i + 1..self.friendly_friends.len(){
+                        if self.friendly_friends[i].id == self.friendly_friends[j].id && self.friendly_friends[i].xp + self.friendly_friends[j].xp <= 6{//pets can only be combined if they add up to lvl 3 or less    
+                            opts_vec.push(vec![8, i as i32, j as i32]);//combine i on j
+                            opts_vec.push(vec![8, j as i32, i as i32]);//combine j on i
+                        }
                     }
                 }
             }
@@ -288,8 +287,8 @@ impl Game{
         if self.money == 0 || self.actions_remaining == 0{//go to battle
             opts_vec.push(vec![9, -1 , -1]);
         }
-
-        return opts_vec
+        println!("Game Options");
+        Ok(opts_vec)
     }
 
     //need function that takes action choice from python then executes it
@@ -306,6 +305,6 @@ fn hello() -> PyResult<String> {
 #[pymodule]
 fn libsap(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(hello, m)?)?;
-
+    m.add_class::<Game>()?;
     Ok(())
 }

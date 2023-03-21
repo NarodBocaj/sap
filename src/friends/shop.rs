@@ -87,6 +87,20 @@ pub struct Shop{
 }
 
 impl Shop{
+    pub fn new() -> Self{
+        let mut shop = Shop{
+            turn_num: 1,//remove this when game fn works, all shop fucntions should use game.turnnum
+            frozen: Vec::new(),
+            for_sale: Vec::new(),
+            lvl_up: Vec::new(),
+            food: Vec::new(),
+            frozen_food: Vec::new(),
+            canned_food_cnt: 0,
+        };
+        shop.roll();
+        return shop
+    }
+
     pub fn roll(&mut self) -> (){
         //beginning of every turn should begin with turn_num += 1
         //then a roll
