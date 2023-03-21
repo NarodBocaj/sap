@@ -8,3 +8,8 @@ edition = "2021"
 [dependencies]
 rand = "0.8"
 cpython = "0.7"
+pyo3 = "0.18.1"
+
+[lib]
+name = "sap"
+crate-type = ["dylib"]

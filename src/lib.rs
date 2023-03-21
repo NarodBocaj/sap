@@ -1,10 +1,12 @@
-use cpython::{Python, PyResult};
+// extern crate cpython;
+// use cpython::{Python, PyResult};
+use pyo3::prelude::*;
+
 
 mod friends;
 
 
 fn main() {
-    //let mut friendly_friends = vec![];
     let mut enemy_friends = vec![];
     let mut lives: i32 = 5;
     let mut trophies: i32 = 0;
@@ -27,16 +29,6 @@ fn main() {
     enemy_friends.push(duck);
 
     
-    let mut shop = friends::shop::Shop{
-        turn_num: 3,
-        frozen: Vec::new(),
-        for_sale: Vec::new(),
-        lvl_up: Vec::new(),
-        food: Vec::new(),
-        frozen_food: Vec::new(),
-        canned_food_cnt: 0,
-    };
-    
     game.shop.roll();
     print_shop(&game.shop);
 
@@ -51,6 +43,22 @@ fn main() {
     battle(&mut my_friends_copy, &mut opp_friends_copy, &mut trophies, &mut lives);
 
     //print_friends(&friendly_friends);
+
+
+    // create Python module
+    // let gil = Python::acquire_gil();
+    // let py = gil.python();
+    // let module = py.import("__main__").unwrap();
+    // let game_module = py.import("game").unwrap();
+
+    // // expose Game struct to Python
+    // let game_class = py.get_type::<Game>(game_module.get(py, "Game").unwrap()).unwrap();
+    // py.setattr(game_module, "Game", game_class).unwrap();
+
+    // // expose other functions to Python here
+
+    // // use Game struct in Python
+    // let game = game_class.call(py, (), None).unwrap().extract::<Game>(py).unwrap();
 }
 
 
