@@ -295,3 +295,17 @@ impl Game{
     //need function that takes action choice from python then executes it
 
 }
+
+
+//testing pyo3
+#[pyfunction]
+fn hello() -> PyResult<String> {
+    Ok("Hello, world!".to_string())
+}
+
+#[pymodule]
+fn libsap(_py: Python, m: &PyModule) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(hello, m)?)?;
+
+    Ok(())
+}
