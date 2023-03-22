@@ -2,7 +2,7 @@
 // use cpython::{Python, PyResult};
 
 use pyo3::prelude::*;
-
+use pyo3::types::PyList;
 
 pub mod friends;
 
@@ -289,6 +289,14 @@ impl Game{
         }
         println!("Game Options");
         Ok(opts_vec)
+    }
+
+    pub fn do_action(&mut self, option: &PyList) -> PyResult<i32>{//function should return a reward for the RL
+        let opt: Vec<i32> = option.into_iter().map(|item| item.extract::<i32>()).collect::<Result<Vec<i32>, _>>()?;
+        if opt[0] == 1{
+            self.shop.buy(&mut self.friendly_friends, opt[1] as usize);
+        }
+        Ok(1)//place holder for rewward function
     }
 
     //need function that takes action choice from python then executes it

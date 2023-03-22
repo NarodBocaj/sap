@@ -30,7 +30,10 @@ pysap = libsap.Game()
 print(pysap.game_state())
 print(pysap.game_options())
 
+game_ops = pysap.game_options()
 
+pysap.do_action(game_ops[0])
+print(pysap.game_state())
 
 # print("Printing Attributes")
 # for attr in dir(pysap):
