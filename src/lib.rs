@@ -251,7 +251,7 @@ impl Game{
 
                 for i in 0..self.shop.food.len(){//food that can bought 3
                     for j in 0..self.friendly_friends.len(){
-                        opts_vec.push(vec![3, j as i32, i as i32]);
+                        opts_vec.push(vec![3, j as i32, i as i32]);//***Note should prevent choloclate from going to lvl 3
                     }
                 }
             }
@@ -293,10 +293,64 @@ impl Game{
 
     pub fn do_action(&mut self, option: &PyList) -> PyResult<i32>{//function should return a reward for the RL
         let opt: Vec<i32> = option.into_iter().map(|item| item.extract::<i32>()).collect::<Result<Vec<i32>, _>>()?;
-        if opt[0] == 1{
-            self.shop.buy(&mut self.friendly_friends, opt[1] as usize);
+        let mut reward: i32 = 0;
+        if opt[0] == -1{//selling
+            self.friendly_friends.remove(opt[1] as usize);
+            self.money += 1;
         }
-        Ok(1)//place holder for rewward function
+        
+        else if opt[0] == 1{//buying to open slot
+            self.shop.buy(&mut self.friendly_friends, opt[1] as usize);
+            self.money -= 3;
+            self.actions_remaining -= 1;
+        }
+
+        else if opt[0] == 2{//buying to combine
+            let mut combined_friend = self.friendly_friends[opt[2] as usize] + self.shop.for_sale[opt[1] as usize];
+            
+            self.friendly_friends.remove(opt[2] as usize);
+            self.shop.for_sale.remove(opt[1] as usize);
+            self.friendly_friends.push(combined_friend);
+
+            self.money -= 3;
+            self.actions_remaining -= 1;
+        }
+
+        else if opt[0] == 3{//buying food
+            self.shop.buy_food(&mut self.friendly_friends, opt[1] as usize, opt[2] as usize);
+            self.money -= 3;
+            self.actions_remaining -= 1;
+        }
+
+        else if opt[0] == 4{//freeze pet
+            self.shop.freeze(opt[1] as usize);
+            self.actions_remaining -= 1;
+        }
+
+        else if opt[0] == 5{//freeze food
+            self.shop.freeze_food(opt[1] as usize);
+            self.actions_remaining -= 1;
+        }
+
+        else if opt[0] == 6{//roll
+            self.shop.roll();
+            self.money -= 1;
+            self.actions_remaining -= 1;
+        }
+
+        else if opt[0] == 7{//swap pets at two different indices
+            self.actions_remaining -= 1;
+        }
+
+        else if opt[0] == 8{//combine team pets together
+            self.actions_remaining -= 1;
+        }
+
+        else if opt[0] == 9{//go to battle
+
+        }
+
+        Ok(reward)//place holder for rewward function
     }
 
     //need function that takes action choice from python then executes it

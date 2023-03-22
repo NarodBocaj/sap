@@ -1,7 +1,7 @@
 use crate::friends::Friend;
 use crate::friends::friend_maker;
 use crate::friends::Food;
-use rand::Rng;
+use rand::{thread_rng, Rng};
 //counts
 //tier 1: 9     idxs: 0-8
 //tier 2: 10    idxs: 9-18
@@ -154,9 +154,107 @@ impl Shop{
         self.frozen_food.push(new_frozen_food);
     }
 
-    pub fn buy_food(&mut self, shop_idx: usize, friend_idx: usize) -> (){
-        //need to ban chocolate purchases for friends already of lvl3
-        let bought_food = self.food.remove(shop_idx);
+    pub fn buy_food(&mut self, friendly_friends: &mut Vec<Friend>, food_idx: usize, pet_idx: usize) -> () {
+        //check all the food ids to give appropriate affect
+        let food = self.food[food_idx];
+        if food.id == 0{//apple
+            friendly_friends[pet_idx].health += 1;
+            friendly_friends[pet_idx].attack += 1;
+        }
+        else if food.id == 1{//honey
+            //figure out how to handle honey
+        }
+        else if food.id == 2{//pill
+            //faint pet, I think I should write fill faint function
+        }
+        else if food.id == 3{//cupcake
+            //temp buff with cupcake
+        }
+        else if food.id == 4{//meatbone
+            friendly_friends[pet_idx].food_id = food.id;
+        }
+        else if food.id == 5{//salad
+            if friendly_friends.len() < 2{
+                if friendly_friends.len() == 1{
+                    friendly_friends[0].attack += 1;
+                    friendly_friends[0].health += 1;
+                }
+                return
+            }
+            let mut rng = thread_rng();
+            let rand_nums = rand::seq::index::sample(&mut rng, friendly_friends.len(), 2).into_vec();
+            for i in rand_nums.iter().map(|&x| x as usize){
+                friendly_friends[i].attack += 1;
+                friendly_friends[i].health += 1;
+            }
+        }
+        else if food.id == 6{//garlic
+            friendly_friends[pet_idx].food_id = food.id;
+        }
+        else if food.id == 7{//canned food
+            self.canned_food_cnt += 1;
+            for mut friend in &mut self.for_sale{
+                friend.attack += 1;
+                friend.health += 1;
+            }
+        }
+        else if food.id == 8{//pear
+            friendly_friends[pet_idx].attack += 2;
+            friendly_friends[pet_idx].health += 2;
+        }
+        else if food.id == 9{//chili
+            friendly_friends[pet_idx].food_id = food.id;
+        }
+        else if food.id == 10{//chocolate
+            friendly_friends[pet_idx].xp += 1;
+            //need to check if lvlup effect happens
+        }
+        else if food.id == 11{//sushi
+            if friendly_friends.len() < 3{
+                if friendly_friends.len() == 2{
+                    friendly_friends[0].attack += 1;
+                    friendly_friends[0].health += 1;
+                    friendly_friends[1].attack += 1;
+                    friendly_friends[1].health += 1;
+                }
+                else if friendly_friends.len() == 1{
+                    friendly_friends[0].attack += 1;
+                    friendly_friends[0].health += 1;
+                }
+                return
+            }
+            let mut rng = thread_rng();
+            let rand_nums = rand::seq::index::sample(&mut rng, friendly_friends.len(), 3).into_vec();
+            for i in rand_nums.iter().map(|&x| x as usize){
+                friendly_friends[i].attack += 1;
+                friendly_friends[i].health += 1;
+            }
+        }
+        else if food.id == 12{//melon
+            friendly_friends[pet_idx].food_id = food.id;
+        }
+        else if food.id == 13{//mushroom
+            friendly_friends[pet_idx].food_id = food.id;
+        }
+        else if food.id == 14{//pizza
+            if friendly_friends.len() < 2{
+                if friendly_friends.len() == 1{
+                    friendly_friends[0].attack += 2;
+                    friendly_friends[0].health += 2;
+                }
+                return
+            }
+            let mut rng = thread_rng();
+            let rand_nums = rand::seq::index::sample(&mut rng, friendly_friends.len(), 2).into_vec();
+            for i in rand_nums.iter().map(|&x| x as usize){
+                friendly_friends[i].attack += 2;
+                friendly_friends[i].health += 2;
+            }
+        }
+        else if food.id == 15{//steak
+            friendly_friends[pet_idx].food_id = food.id;
+        }
+        self.food.remove(food_idx);
     }
 }
 
