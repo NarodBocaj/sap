@@ -20,8 +20,8 @@ pub fn battle(my_friends: &mut Vec<friends::Friend>, opp_friends: &mut Vec<frien
         let opp_attack = opp_friends[0].attack;
         
         //need to know food situation too 
-        do_dmg(my_friends, opp_attack, 0);//my team recieving dmg | should call appropriate friend ahead fns
-        do_dmg(opp_friends, my_attack, 0);//opps team recieving dmg | should call appropriate friend ahead fns
+        friends::do_dmg(my_friends, opp_attack, 0);//my team recieving dmg | should call appropriate friend ahead fns
+        friends::do_dmg(opp_friends, my_attack, 0);//opps team recieving dmg | should call appropriate friend ahead fns
         //I believe some kind of hurt queue is prudent here
     }
     println!("Final Team State");
@@ -40,18 +40,6 @@ pub fn battle(my_friends: &mut Vec<friends::Friend>, opp_friends: &mut Vec<frien
     }
 }
 
-fn do_dmg(team: &mut Vec<friends::Friend>, dmg: i32, idx: usize) -> (){
-    team[idx].health -= dmg;
-    if team[idx].health < 1{
-        let fainted_pet = team.remove(idx);
-        fainted_pet.faint(team, 0);
-    }
-    else{
-        //run the hurt ability
-        //also need to make sure fainting is complete before running the hurt ability
-        //maybe return an alive indicator so the hurt ability is run after
-    }
-}
 
 pub fn print_friends(friendly_friends: & Vec<friends::Friend>) -> (){
     println!("Printing current my team: id attack/health");
@@ -407,8 +395,8 @@ pub fn test_battle(game: &mut Game, opp_friends: &mut Vec<friends::Friend>, rewa
         let opp_attack = opp_friends[0].attack;
         
         //need to know food situation too 
-        do_dmg(&mut my_friends, opp_attack, 0);//my team recieving dmg | should call appropriate friend ahead fns
-        do_dmg(opp_friends, my_attack, 0);//opps team recieving dmg | should call appropriate friend ahead fns
+        friends::do_dmg(&mut my_friends, opp_attack, 0);//my team recieving dmg | should call appropriate friend ahead fns
+        friends::do_dmg(opp_friends, my_attack, 0);//opps team recieving dmg | should call appropriate friend ahead fns
         //I believe some kind of hurt queue is prudent here
     }
     println!("Final Team State");

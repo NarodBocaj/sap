@@ -70,8 +70,9 @@ pub const MAMMOTH: i32 = 55; //tier 6
 pub const SNAKE: i32 = 56; //tier 6
 pub const TIGER: i32 = 57; //tier 6
 
+pub const ZOMBIECRICKET: i32 = 58; //summon only
 
-pub const PETS: [(i32, i32, i32, &str); 58] = [
+pub const PETS: [(i32, i32, i32, &str); 59] = [
     //id, attack, health, name
     (ANT, 2, 1, "ant"),
     (BEAVER, 3, 2, "beaver"),
@@ -131,6 +132,8 @@ pub const PETS: [(i32, i32, i32, &str); 58] = [
     (MAMMOTH, 3, 10, "mammoth"),
     (SNAKE, 6, 6, "snake"),
     (TIGER, 4, 3, "tiger"),
+
+    (ZOMBIECRICKET, 1, 1, "zombiecricket"),
 ];
 
 pub struct Shop{

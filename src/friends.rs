@@ -5,6 +5,7 @@ use rand::{thread_rng, Rng};
 //use rand::distributions::Uniform;
 use std::cmp;
 
+
 #[derive(Clone, Copy)]
 pub struct Friend{
     pub attack: i32,//need to implement temp added attack
@@ -33,7 +34,7 @@ impl Friend{
             let zombie_cricket = Friend{
                 attack: 1 * lvl,
                 health: 1 * lvl,
-                id: 100,
+                id: 58,
                 tier: 1,
                 xp: 1,
                 food_id: -1,
@@ -129,4 +130,17 @@ pub fn tier_calc(id: i32) -> i32{
 #[derive(Clone, Copy)]
 pub struct Food{
     pub id: i32,
+}
+
+pub fn do_dmg(team: &mut Vec<Friend>, dmg: i32, idx: usize) -> (){
+    team[idx].health -= dmg;
+    if team[idx].health < 1{
+        let fainted_pet = team.remove(idx);
+        fainted_pet.faint(team, 0);
+    }
+    else{
+        //run the hurt ability
+        //also need to make sure fainting is complete before running the hurt ability
+        //maybe return an alive indicator so the hurt ability is run after
+    }
 }
