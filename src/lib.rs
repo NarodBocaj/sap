@@ -297,12 +297,14 @@ impl Game{
         if opt[0] == -1{//selling
             self.friendly_friends.remove(opt[1] as usize);
             self.money += 1;
+            reward -= 1;
         }
         
         else if opt[0] == 1{//buying to open slot
             self.shop.buy(&mut self.friendly_friends, opt[1] as usize);
             self.money -= 3;
             self.actions_remaining -= 1;
+            reward += 1;
         }
 
         else if opt[0] == 2{//buying to combine
@@ -314,10 +316,11 @@ impl Game{
 
             self.money -= 3;
             self.actions_remaining -= 1;
+            reward += 1;
         }
 
         else if opt[0] == 3{//buying food
-            self.shop.buy_food(&mut self.friendly_friends, opt[1] as usize, opt[2] as usize);
+            self.shop.buy_food(&mut self.friendly_friends, opt[2] as usize, opt[1] as usize);//food idx then pet idx
             self.money -= 3;
             self.actions_remaining -= 1;
         }
@@ -361,18 +364,36 @@ impl Game{
             self.actions_remaining -= 1;
         }
 
-        else if opt[0] == 9{//go to battle
-
+        else if opt[0] == 9{//go to battle and reset the shop, gold, etc
+            let mut opp_friends = Vec::new();
+            let mut mos1 = friends::friend_maker(friends::shop::MOSQUITO, 0);
+            let mut mos2 = friends::friend_maker(friends::shop::MOSQUITO, 0);
+            opp_friends.push(mos1);
+            opp_friends.push(mos2);
+            test_battle(self, &mut opp_friends, &mut reward);
+            self.turnnum += 1;
+            self.shop.turn_num += 1;
+            self.money = 10;
+            self.actions_remaining = 50;
+            self.shop.roll();
         }
 
         Ok(reward)//place holder for rewward function
     }
 
-    //need function that takes action choice from python then executes it
+    pub fn game_alive(&self) -> PyResult<bool>{
+        if self.wins < 10 && self.lives > 0{
+            println!("Wins = {}, Lives = {}", self.wins, self.lives);
+            Ok(true)
+        }
+        else{
+            Ok(false)
+        }
+    }
 
 }
 
-pub fn test_battle(&mut game: Game, opp_friends: &mut Vec<friends::Friend>) -> (){
+pub fn test_battle(game: &mut Game, opp_friends: &mut Vec<friends::Friend>, reward: &mut i32) -> (){
     //run start of battle ability for all pets
     let mut my_friends = game.friendly_friends.clone();
 
@@ -380,32 +401,32 @@ pub fn test_battle(&mut game: Game, opp_friends: &mut Vec<friends::Friend>) -> (
         //make them battle
         //print_friends(my_friends);
         //print_enemies(opp_friends);
-        println!("{}", print_battle_state(my_friends, opp_friends));
+        println!("{}", print_battle_state(&my_friends, opp_friends));
 
         let my_attack = my_friends[0].attack;
         let opp_attack = opp_friends[0].attack;
         
         //need to know food situation too 
-        do_dmg(my_friends, opp_attack, 0);//my team recieving dmg | should call appropriate friend ahead fns
+        do_dmg(&mut my_friends, opp_attack, 0);//my team recieving dmg | should call appropriate friend ahead fns
         do_dmg(opp_friends, my_attack, 0);//opps team recieving dmg | should call appropriate friend ahead fns
         //I believe some kind of hurt queue is prudent here
     }
     println!("Final Team State");
-    println!("{}", print_battle_state(my_friends, opp_friends));
+    println!("{}", print_battle_state(&my_friends, opp_friends));
 
     if my_friends.len() > 0{
         game.wins += 1;
+        *reward += 10;//placeholder for reward
         println!("We won!");
     }
-    else if my_friends.len() == 0 && opp_friends.len() == 0{
-        game.lives -= 1; //situation where both vecs have len == 0 is a tie and nothing happens
+    else if my_friends.len() == 0 && opp_friends.len() == 0{ //situation where both vecs have len == 0 is a tie and nothing happens
         println!("We tied!");
     }
     else{
+        game.lives -= 1;
+        *reward -= 10;//placeholder for reward
         println!("You lost you fucking loser....what's wrongs with you, why can't you do anything right");
     }
-    game.turn_num += 1;
-    game.shop.turn_num += 1;
 }
 
 //testing pyo3
