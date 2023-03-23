@@ -41,8 +41,37 @@ pub const OX: i32 = 26; //tier 3
 pub const RABBIT: i32 = 27; //tier 3
 pub const SHEEP: i32 = 28; //tier 3
 pub const SNAIL: i32 = 29; //tier 3
+pub const BISON: i32 = 30; //tier 4
+pub const DEER: i32 = 31; //tier 4
+pub const HIPPO: i32 = 32; //tier 4
+pub const PARROT: i32 = 33; //tier 4
+pub const PENGUIN: i32 = 34; //tier 4
+pub const ROOSTER: i32 = 35; //tier 4
+pub const SKUNK: i32 = 36; //tier 4
+pub const SQUIRREL: i32 = 37; //tier 4
+pub const TURTLE: i32 = 38; //tier 4
+pub const WHALE: i32 = 39; //tier 4
+pub const WORM: i32 = 40; //tier 4
+pub const COW: i32 = 41; //tier 5
+pub const CROCODILE: i32 = 42; //tier 5
+pub const MONKEY: i32 = 43; //tier 5
+pub const RHINO: i32 = 44; //tier 5
+pub const SCORPION: i32 = 45; //tier 5
+pub const SEAL: i32 = 46; //tier 5
+pub const SHARK: i32 = 47; //tier 5
+pub const TURKEY: i32 = 48; //tier 5
+pub const BOAR: i32 = 49; //tier 6
+pub const CAT: i32 = 50; //tier 6
+pub const DRAGON: i32 = 51; //tier 6
+pub const FLY: i32 = 52; //tier 6
+pub const GORILLA: i32 = 53; //tier 6
+pub const LEOPARD: i32 = 54; //tier 6
+pub const MAMMOTH: i32 = 55; //tier 6
+pub const SNAKE: i32 = 56; //tier 6
+pub const TIGER: i32 = 57; //tier 6
 
-pub const PETS: [(i32, i32, i32, &str); 30] = [
+
+pub const PETS: [(i32, i32, i32, &str); 58] = [
     //id, attack, health, name
     (ANT, 2, 1, "ant"),
     (BEAVER, 3, 2, "beaver"),
@@ -74,6 +103,34 @@ pub const PETS: [(i32, i32, i32, &str); 30] = [
     (RABBIT, 1, 2, "rabbit"),
     (SHEEP, 2, 2, "sheep"),
     (SNAIL, 2, 2, "snail"),
+    (BISON, 5, 3, "bison"),
+    (DEER, 1, 1, "deer"),
+    (HIPPO, 4, 5, "hippo"),
+    (PARROT, 4, 2, "parrot"),
+    (PENGUIN, 2, 4, "penguin"),
+    (ROOSTER, 5, 3, "rooster"),
+    (SKUNK, 3, 5, "skunk"),
+    (SQUIRREL, 2, 5, "squirrel"),
+    (TURTLE, 2, 5, "turtle"),
+    (WHALE, 3, 8, "whale"),
+    (WORM, 3, 3, "worm"),
+    (COW, 4, 6, "cow"),
+    (CROCODILE, 8, 4, "crocodile"),
+    (MONKEY, 1, 2, "monkey"),
+    (RHINO, 5, 8, "rhino"),
+    (SCORPION, 1, 1, "scorpion"),
+    (SEAL, 3, 8, "seal"),
+    (SHARK, 4, 2, "shark"),
+    (TURKEY, 3, 4, "turkey"),
+    (BOAR, 10, 6, "boar"),
+    (CAT, 4, 5, "cat"),
+    (DRAGON, 6, 8, "dragon"),
+    (FLY, 5, 5, "fly"),
+    (GORILLA, 6, 9, "gorilla"),
+    (LEOPARD, 10, 4, "leopard"),
+    (MAMMOTH, 3, 10, "mammoth"),
+    (SNAKE, 6, 6, "snake"),
+    (TIGER, 4, 3, "tiger"),
 ];
 
 pub struct Shop{
@@ -299,3 +356,11 @@ pub const MELON: i32 = 12;  //tier 6
 pub const MUSHROOM: i32 = 13;//tier 6
 pub const PIZZA: i32 = 14;  //tier 6
 pub const STEAK: i32 = 15;  //tier 6
+
+pub fn check_pet_ids() -> (){
+    for i in 0..PETS.len(){
+        if PETS[i].0 != i as i32{
+            println!{"Pet off = {}", PETS[i].3}
+        }
+    }
+}

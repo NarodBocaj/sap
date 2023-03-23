@@ -37,4 +37,6 @@ fn main() {
     sap::battle(&mut my_friends_copy, &mut opp_friends_copy, &mut trophies, &mut lives);
 
     //print_friends(&friendly_friends);
+    println!("Checking shop pet ids");
+    sap::friends::shop::check_pet_ids();
 }
