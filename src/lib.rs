@@ -339,10 +339,25 @@ impl Game{
         }
 
         else if opt[0] == 7{//swap pets at two different indices
+            self.friendly_friends.swap(opt[1] as usize, opt[2] as usize);
             self.actions_remaining -= 1;
         }
 
         else if opt[0] == 8{//combine team pets together
+            let idx1 = opt[1] as usize;
+            let idx2 = opt[2] as usize; 
+            let mut combined_pet = self.friendly_friends[idx1] + self.friendly_friends[idx2];
+
+            let (remove_idx1, remove_idx2) = if idx1 > idx2 {
+                (idx1, idx2)
+            } else {
+                (idx2, idx1)
+            };
+
+            self.friendly_friends.remove(remove_idx1);
+            self.friendly_friends.remove(remove_idx2);
+
+            self.friendly_friends.push(combined_pet);
             self.actions_remaining -= 1;
         }
 
@@ -357,6 +372,41 @@ impl Game{
 
 }
 
+pub fn test_battle(&mut game: Game, opp_friends: &mut Vec<friends::Friend>) -> (){
+    //run start of battle ability for all pets
+    let mut my_friends = game.friendly_friends.clone();
+
+    while my_friends.len() > 0 && opp_friends.len() > 0{
+        //make them battle
+        //print_friends(my_friends);
+        //print_enemies(opp_friends);
+        println!("{}", print_battle_state(my_friends, opp_friends));
+
+        let my_attack = my_friends[0].attack;
+        let opp_attack = opp_friends[0].attack;
+        
+        //need to know food situation too 
+        do_dmg(my_friends, opp_attack, 0);//my team recieving dmg | should call appropriate friend ahead fns
+        do_dmg(opp_friends, my_attack, 0);//opps team recieving dmg | should call appropriate friend ahead fns
+        //I believe some kind of hurt queue is prudent here
+    }
+    println!("Final Team State");
+    println!("{}", print_battle_state(my_friends, opp_friends));
+
+    if my_friends.len() > 0{
+        game.wins += 1;
+        println!("We won!");
+    }
+    else if my_friends.len() == 0 && opp_friends.len() == 0{
+        game.lives -= 1; //situation where both vecs have len == 0 is a tie and nothing happens
+        println!("We tied!");
+    }
+    else{
+        println!("You lost you fucking loser....what's wrongs with you, why can't you do anything right");
+    }
+    game.turn_num += 1;
+    game.shop.turn_num += 1;
+}
 
 //testing pyo3
 #[pyfunction]
