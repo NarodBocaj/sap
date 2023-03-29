@@ -214,21 +214,26 @@ impl Game{
         
         //format will be [code for option, idx 1 affected (-1 if none), idx 2 affected (-1 if none)]
 
-        //-1 will be sell
-        //1 will be buy to open slot
-        //2 will be buy to combine with certain index
-        //3 will be buy food to certain index
-        //4 will be freeze shop pet at index
-        //5 will be freeze shop food at index
-        //6 will be roll
-        //7 will be swap pets and will take two indices (it will only be allowed to swap adjacent pets)
-        //8 will be combine team pets together
-        //9 will be go to battle and will only be allowed when money is out and will be forced when remaining actions gets to 0
+        //-1 will be sell (max 5 sell actions)
+        //1 will be buy to open slot (max 6 actions here)
+        //2 will be buy to combine with certain index (max 30 actions here)
+        //3 will be buy food to certain index (max 10 actions)
+        //4 will be freeze shop pet at index (max 6 actions)
+        //5 will be freeze shop food at index (max 2 actions)
+        //6 will be roll (1 action)
+        //7 will be swap pets and will take two indices (it will only be allowed to swap adjacent pets, max 4 actions)
+        //8 will be combine team pets together (8 + 6 + 4 + 2, max 20 actions)
+        //9 will be go to battle and will only be allowed when money is out and will be forced when remaining actions gets to 0 (max 1 action)
+        //total possible actions 85
         let mut opts_vec = Vec::new();
  
         if self.actions_remaining > 0{
             for idx in 0..self.friendly_friends.len(){//things that can be sold -1
                 opts_vec.push(vec![-1, idx as i32, -1]);
+            }
+
+            for _ in self.friendly_friends.len()..5{//*empty option for pets that can't be sold
+                opts_vec.push(vec![]);
             }
    
             if self.money > 2{
@@ -236,54 +241,136 @@ impl Game{
                     for idx in 0..self.shop.for_sale.len(){
                         opts_vec.push(vec![1, idx as i32, -1]);
                     }
+
+                    for _ in self.shop.for_sale.len()..6{//**empty options for buying to open slot when shop isnt of len 6
+                        opts_vec.push(vec![]);
+                    }
+
                 }
 
-                for i in 0..self.shop.for_sale.len(){//things that can be bought to combine 2
-                    for j in 0..self.friendly_friends.len(){
-                        if self.shop.for_sale[i].id == self.friendly_friends[j].id{
-                            opts_vec.push(vec![2, i as i32, j as i32]);
+                else{//**empty options for buying to open slot
+                    for _ in 0..6{
+                        opts_vec.push(vec![]);
+                    }
+                }
+
+                // for i in 0..self.shop.for_sale.len(){//old method before constant indices in the opts_vec
+                //     for j in 0..self.friendly_friends.len(){
+                //         if self.shop.for_sale[i].id == self.friendly_friends[j].id{
+                //             opts_vec.push(vec![2, i as i32, j as i32]);
+                //         }
+                //     }
+                // }
+
+                for i in 0..6{//things that can be bought to combine 2
+                    for j in 0..5{
+                        if i < self.shop.for_sale.len() && j < self.friendly_friends.len(){
+                            if self.shop.for_sale[i].id == self.friendly_friends[j].id{
+                                opts_vec.push(vec![2, i as i32, j as i32]);
+                            }
+                            else{//**empty option if ID doesn't match
+                                opts_vec.push(vec![]);
+                            }
+                        }
+                        else{//**empty option if outside of shop or team range
+                            opts_vec.push(vec![]);
                         }
                     }
                 }
 
-                for i in 0..self.shop.food.len(){//food that can bought 3
-                    for j in 0..self.friendly_friends.len(){
-                        opts_vec.push(vec![3, j as i32, i as i32]);//***Note should prevent choloclate from going to lvl 3
+                for i in 0..2{//food that can bought 3
+                    for j in 0..5{
+                        if i < self.shop.food.len() && j < self.friendly_friends.len(){
+                            if self.shop.food[i].id == 10 && self.friendly_friends[j].xp >= 6{//**push empty if chocolate cannot be bought
+                                opts_vec.push(vec![]);
+                            }
+                            else{
+                                opts_vec.push(vec![3, j as i32, i as i32]);
+                            }
+                        }
+                        else{//**empty options for out of food or team range
+                            opts_vec.push(vec![]);
+                        }
                     }
                 }
             }
 
-            for idx in 0..self.shop.for_sale.len(){//pet that can be frozen 4
-                opts_vec.push(vec![4, idx as i32, -1]);
+            else{//**empty options for when money is too low for options 1, 2, and 3
+                for _ in 0..46{
+                    opts_vec.push(vec![]);
+                }
             }
 
-            for idx in 0..self.shop.food.len(){//food that can be frozen 5
-                opts_vec.push(vec![5, idx as i32, -1]);
+            for idx in 0..6{//pet that can be frozen 4
+                if idx < self.shop.for_sale.len(){
+                    opts_vec.push(vec![4, idx as i32, -1]);
+                }
+                else{//**empty option if outside shop range
+                    opts_vec.push(vec![]);
+                }
+            }
+
+            for idx in 0..2{//food that can be frozen 5
+                if idx < self.shop.food.len(){
+                    opts_vec.push(vec![5, idx as i32, -1]);
+                }
+                else{//**empty option for out of food range
+                    opts_vec.push(vec![]);
+                }
             }
 
             if self.money > 0{//roll the shop 6
                 opts_vec.push(vec![6, -1 , -1]);
             }
 
-            if self.friendly_friends.len() > 0{
-                for idx in 0..self.friendly_friends.len() - 1{//swap pets 7
+            else{//**empty option for when shop can't be rolled
+                opts_vec.push(vec![]);
+            }
+
+            for idx in 0..4{//swap pets 7
+                if idx + 1 < self.friendly_friends.len(){
                     opts_vec.push(vec![7, idx as i32, (idx + 1) as i32]);
                 }
+                else{//**empty option for when out of team range
+                    opts_vec.push(vec![]);
+                }
+            }
 
-                for i in 0..self.friendly_friends.len() - 1{//combine pets on team 8
-                    for j in i + 1..self.friendly_friends.len(){
+            for i in 0..4{//combine pets on team 8
+                for j in i + 1..5{
+                    if j < self.friendly_friends.len() {
                         if self.friendly_friends[i].id == self.friendly_friends[j].id && self.friendly_friends[i].xp + self.friendly_friends[j].xp <= 6{//pets can only be combined if they add up to lvl 3 or less    
                             opts_vec.push(vec![8, i as i32, j as i32]);//combine i on j
                             opts_vec.push(vec![8, j as i32, i as i32]);//combine j on i
                         }
+                        else{//empty options for when pet ids don't match
+                            opts_vec.push(vec![]);
+                            opts_vec.push(vec![]);
+                        }
+                    }
+                    else{//empty options for when out of team range
+                        opts_vec.push(vec![]);
+                        opts_vec.push(vec![]);
                     }
                 }
+            }
+
+        }
+
+        else{//**push empty options
+            for _ in 0..84{
+                opts_vec.push(vec![]);
             }
         }
 
         if self.money == 0 || self.actions_remaining == 0{//go to battle
             opts_vec.push(vec![9, -1 , -1]);
         }
+
+        else{//**push empty actions for no going to battle
+            opts_vec.push(vec![]);
+        }
+
         println!("Game Options");
         Ok(opts_vec)
     }

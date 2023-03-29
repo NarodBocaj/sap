@@ -42,6 +42,46 @@ def choose_action(state, game_options, policy_net):
 
     return action
 
+def update_policy(policy_net, optimizer, rewards, log_probs):
+    # calculate discounted rewards
+    discounted_rewards = []
+    cumulative_reward = 0
+    for r in reversed(rewards):
+        cumulative_reward = r + 0.99 * cumulative_reward
+        discounted_rewards.insert(0, cumulative_reward)
+
+    # normalize discounted rewards
+    discounted_rewards = torch.tensor(discounted_rewards, dtype=torch.float32)
+    discounted_rewards = (discounted_rewards - discounted_rewards.mean()) / (discounted_rewards.std() + 1e-9)
+
+    # calculate loss
+    policy_loss = []
+    for log_prob, reward in zip(log_probs, discounted_rewards):
+        policy_loss.append(-log_prob * reward)
+    policy_loss = torch.stack(policy_loss).sum()
+
+    # update policy network
+    optimizer.zero_grad()
+    policy_loss.backward()
+    optimizer.step()
+
+def play_game(policy_net, optimizer):
+    state = np.random.rand(10)
+    game_options = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [], []]
+    log_probs = []
+    rewards = []
+
+    # play the game and collect rewards and log probabilities
+    while not done:
+        action = choose_action(state, game_options, policy_net)
+        log_prob = torch.log(policy_net(torch.tensor(state, dtype=torch.float32))[action])
+        state, reward, done = take_action(action)
+        log_probs.append(log_prob)
+        rewards.append(reward)
+
+    # update policy network
+    update_policy(policy_net, optimizer, rewards, log_probs)
+
 pysap = libsap.Game()
 
 # define game state size and number of actions
