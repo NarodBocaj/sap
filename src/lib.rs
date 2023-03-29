@@ -137,12 +137,12 @@ impl Game{
             money: 10,
             friendly_friends: Vec::new(),
             shop: friends::shop::Shop::new(),
-            lost_lst_rnd: false,
+            lost_lst_rnd: false,//This needs to only go back to true when a win happens
             actions_remaining: 50,
         }
     }
 
-    pub fn game_state(&self) -> PyResult<Vec<i32>> {//need to add wins and lives remaining
+    pub fn game_state(&self) -> PyResult<Vec<i32>> {
         println!("Game State");
         let mut state_vec: Vec<i32> = Vec::new();
         for i in 0..5{//getting all of the team info
@@ -188,6 +188,11 @@ impl Game{
             state_vec.push(fud.id);
             state_vec.push(1);//frozen status
         }
+        for _ in (self.shop.frozen_food.len() + self.shop.food.len())..2{//adding fillers for missing food shop slots
+            for x in 0..2{
+                state_vec.push(1024);
+            }
+        }
         if self.lost_lst_rnd{
             state_vec.push(1);
         }
@@ -196,6 +201,10 @@ impl Game{
         }
         state_vec.push(self.shop.canned_food_cnt);
         state_vec.push(self.actions_remaining);
+        state_vec.push(self.money);
+        state_vec.push(self.wins);
+        state_vec.push(self.lives);
+        state_vec.push(self.turnnum);
         Ok(state_vec)
     }
     
