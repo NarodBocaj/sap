@@ -3,6 +3,7 @@ from pathlib import Path
 
 import time
 import torch
+import torch.optim as optim
 import numpy as np
 
 
@@ -19,6 +20,10 @@ class PolicyNetwork(torch.nn.Module):
         self.fc2 = torch.nn.Linear(128, 64)
         self.fc3 = torch.nn.Linear(64, action_size)
 
+        torch.nn.init.xavier_uniform_(self.fc1.weight)
+        torch.nn.init.xavier_uniform_(self.fc2.weight)
+        torch.nn.init.xavier_uniform_(self.fc3.weight)
+
     def forward(self, x):
         x = torch.relu(self.fc1(x))
         x = torch.relu(self.fc2(x))
@@ -28,7 +33,7 @@ class PolicyNetwork(torch.nn.Module):
 def choose_action(state, game_options, policy_net):
     # convert state to PyTorch tensor
     state = torch.tensor(state, dtype=torch.float32)
-
+    
     # get Q values for each action using the policy network
     q_values = policy_net(state)
 
@@ -38,9 +43,11 @@ def choose_action(state, game_options, policy_net):
             q_values[i] = -float('inf')
 
     # choose action with the highest Q value
-    action = torch.argmax(q_values).item()
+    action, action_idx = torch.argmax(q_values).item(), torch.argmax(q_values) 
 
-    return action
+    #print(f"Choosing action from {q_values}")
+
+    return (action, action_idx)
 
 def update_policy(policy_net, optimizer, rewards, log_probs):
     # calculate discounted rewards
@@ -66,18 +73,26 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
     optimizer.step()
 
 def play_game(policy_net, optimizer):
-    state = np.random.rand(10)
-    game_options = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [], []]
+    game = libsap.Game()
     log_probs = []
     rewards = []
-
+    playing_game = True
     # play the game and collect rewards and log probabilities
-    while not done:
-        action = choose_action(state, game_options, policy_net)
+    while playing_game:
+        state = game.game_state()
+        actions = game.game_options()
+        action, action_idx = choose_action(state, actions, policy_net)
         log_prob = torch.log(policy_net(torch.tensor(state, dtype=torch.float32))[action])
-        state, reward, done = take_action(action)
+        reward = game.do_action(actions[action_idx])
+        playing_game = game.game_alive()
         log_probs.append(log_prob)
         rewards.append(reward)
+
+        print(f"Rewards are {rewards}")
+        print(f"Log probs are {log_probs}")
+
+    wins, lives = game.gen_game()
+    print(f"Won {wins} games. {lives} remaining")
 
     # update policy network
     update_policy(policy_net, optimizer, rewards, log_probs)
@@ -86,12 +101,17 @@ pysap = libsap.Game()
 
 # define game state size and number of actions
 state_size = 66
-num_actions = 5
+num_actions = 85
 
 # initialize policy network
 policy_net = PolicyNetwork(state_size, num_actions)
+optimizer = optim.Adam(policy_net.parameters(), lr=0.01)
 
-chosen_action = choose_action(game_state, game_options, policy_net)
+for _ in range(1):
+    play_game(policy_net, optimizer)
+
+
+#play_game(policy_net, optimizer)
 
 
 end_time = time.time()

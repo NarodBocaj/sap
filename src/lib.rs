@@ -375,20 +375,20 @@ impl Game{
         Ok(opts_vec)
     }
 
-    pub fn do_action(&mut self, option: &PyList) -> PyResult<i32>{//function should return a reward for the RL
+    pub fn do_action(&mut self, option: &PyList) -> PyResult<f32>{//function should return a reward for the RL
         let opt: Vec<i32> = option.into_iter().map(|item| item.extract::<i32>()).collect::<Result<Vec<i32>, _>>()?;
-        let mut reward: i32 = 0;
+        let mut reward: f32 = 0.0;
         if opt[0] == -1{//selling
             self.friendly_friends.remove(opt[1] as usize);
             self.money += 1;
-            reward -= 1;
+            reward -= 2.0;
         }
         
         else if opt[0] == 1{//buying to open slot
             self.shop.buy(&mut self.friendly_friends, opt[1] as usize);
             self.money -= 3;
             self.actions_remaining -= 1;
-            reward += 1;
+            reward += 5.0;
         }
 
         else if opt[0] == 2{//buying to combine
@@ -400,34 +400,39 @@ impl Game{
 
             self.money -= 3;
             self.actions_remaining -= 1;
-            reward += 1;
+            reward += 2.0;
         }
 
         else if opt[0] == 3{//buying food
             self.shop.buy_food(&mut self.friendly_friends, opt[2] as usize, opt[1] as usize);//food idx then pet idx
             self.money -= 3;
             self.actions_remaining -= 1;
+            reward += 0.5;
         }
 
         else if opt[0] == 4{//freeze pet
             self.shop.freeze(opt[1] as usize);
             self.actions_remaining -= 1;
+            reward -= 0.1;
         }
 
         else if opt[0] == 5{//freeze food
             self.shop.freeze_food(opt[1] as usize);
             self.actions_remaining -= 1;
+            reward -= 0.1;
         }
 
         else if opt[0] == 6{//roll
             self.shop.roll();
             self.money -= 1;
             self.actions_remaining -= 1;
+            reward -= 0.1;
         }
 
         else if opt[0] == 7{//swap pets at two different indices
             self.friendly_friends.swap(opt[1] as usize, opt[2] as usize);
             self.actions_remaining -= 1;
+            reward -= 0.1;
         }
 
         else if opt[0] == 8{//combine team pets together
@@ -446,6 +451,7 @@ impl Game{
 
             self.friendly_friends.push(combined_pet);
             self.actions_remaining -= 1;
+            reward += 0.1;
         }
 
         else if opt[0] == 9{//go to battle and reset the shop, gold, etc
@@ -475,9 +481,16 @@ impl Game{
         }
     }
 
+    pub fn gen_game(&self) -> PyResult<Vec<i32>>{
+        let mut res = vec![];
+        res.push(self.wins);
+        res.push(self.lives);
+        Ok(res)
+    }
+
 }
 
-pub fn test_battle(game: &mut Game, opp_friends: &mut Vec<friends::Friend>, reward: &mut i32) -> (){
+pub fn test_battle(game: &mut Game, opp_friends: &mut Vec<friends::Friend>, reward: &mut f32) -> (){
     //run start of battle ability for all pets
     let mut my_friends = game.friendly_friends.clone();
 
@@ -500,15 +513,16 @@ pub fn test_battle(game: &mut Game, opp_friends: &mut Vec<friends::Friend>, rewa
 
     if my_friends.len() > 0{
         game.wins += 1;
-        *reward += 10;//placeholder for reward
+        *reward += 10.0 * game.wins as f32;//placeholder for reward
         println!("We won!");
     }
     else if my_friends.len() == 0 && opp_friends.len() == 0{ //situation where both vecs have len == 0 is a tie and nothing happens
+        *reward -= 0.1;
         println!("We tied!");
     }
     else{
         game.lives -= 1;
-        *reward -= 10;//placeholder for reward
+        *reward -= 10.0 * (5.0 - game.lives as f32);//placeholder for reward
         println!("You lost you fucking loser....what's wrongs with you, why can't you do anything right");
     }
 }
