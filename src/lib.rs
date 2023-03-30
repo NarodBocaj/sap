@@ -413,26 +413,26 @@ impl Game{
         else if opt[0] == 4{//freeze pet
             self.shop.freeze(opt[1] as usize);
             self.actions_remaining -= 1;
-            reward -= 0.1;
+            reward -= 1.0;
         }
 
         else if opt[0] == 5{//freeze food
             self.shop.freeze_food(opt[1] as usize);
             self.actions_remaining -= 1;
-            reward -= 0.1;
+            reward -= 1.0;
         }
 
         else if opt[0] == 6{//roll
             self.shop.roll();
             self.money -= 1;
             self.actions_remaining -= 1;
-            reward -= 0.1;
+            reward += 0.1;
         }
 
         else if opt[0] == 7{//swap pets at two different indices
             self.friendly_friends.swap(opt[1] as usize, opt[2] as usize);
             self.actions_remaining -= 1;
-            reward -= 0.1;
+            reward -= 1.0;
         }
 
         else if opt[0] == 8{//combine team pets together

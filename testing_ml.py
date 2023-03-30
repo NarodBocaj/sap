@@ -22,7 +22,7 @@ class PolicyNetwork(torch.nn.Module):
 
         torch.nn.init.xavier_uniform_(self.fc1.weight)
         torch.nn.init.xavier_uniform_(self.fc2.weight)
-        torch.nn.init.xavier_uniform_(self.fc3.weight)
+        torch.nn.init.uniform_(self.fc3.weight, -0.01, 0.01)
 
     def forward(self, x):
         x = torch.relu(self.fc1(x))
@@ -47,6 +47,7 @@ def choose_action(state, game_options, policy_net):
 
     #print(f"Choosing action from {q_values}")
 
+
     return (action, action_idx)
 
 def update_policy(policy_net, optimizer, rewards, log_probs):
@@ -69,6 +70,9 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
 
     # update policy network
     optimizer.zero_grad()
+
+    policy_loss = policy_loss.clone().detach().requires_grad_(True)
+
     policy_loss.backward()
     optimizer.step()
 
@@ -82,16 +86,33 @@ def play_game(policy_net, optimizer):
         state = game.game_state()
         actions = game.game_options()
         action, action_idx = choose_action(state, actions, policy_net)
-        log_prob = torch.log(policy_net(torch.tensor(state, dtype=torch.float32))[action])
+
+        q_vals = policy_net(torch.tensor(state, dtype=torch.float32))
+
+        # print(f"Q vals are = {q_vals}")
+        # print(sum(q_vals))
+
+        selected_qval = q_vals[action]
+        if selected_qval == 0:
+            selected_qval = torch.tensor(1/85, dtype=torch.float32)
+        log_prob = torch.log(selected_qval)
+
+        #log_prob = torch.log(policy_net(torch.tensor(state, dtype=torch.float32))[action])
+        
         reward = game.do_action(actions[action_idx])
         playing_game = game.game_alive()
         log_probs.append(log_prob)
         rewards.append(reward)
 
-        print(f"Rewards are {rewards}")
-        print(f"Log probs are {log_probs}")
+    #print(f"Rewards are {rewards}")
+    #print(f"Log probs are {log_probs}")
 
     wins, lives = game.gen_game()
+    if len(win_array) > 10:
+        win_array.pop(0)
+        win_array.append(wins)
+    else:
+        win_array.append(wins)
     print(f"Won {wins} games. {lives} remaining")
 
     # update policy network
@@ -105,14 +126,21 @@ num_actions = 85
 
 # initialize policy network
 policy_net = PolicyNetwork(state_size, num_actions)
-optimizer = optim.Adam(policy_net.parameters(), lr=0.01)
+optimizer = optim.Adam(policy_net.parameters(), lr = 0.0001)
 
-for _ in range(1):
+
+win_array = []
+# for _ in range(100):
+#     play_game(policy_net, optimizer)
+
+game_count = 0
+while sum(win_array) / 10 < 5:
+    game_count += 1
     play_game(policy_net, optimizer)
-
+    print(f"Current Game Count = {game_count}")
 
 #play_game(policy_net, optimizer)
 
-
+print(f"The win array is: {win_array}")
 end_time = time.time()
 print("Code execution time:", end_time - start_time, "seconds")
