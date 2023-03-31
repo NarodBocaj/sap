@@ -60,7 +60,7 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
 
     # normalize discounted rewards
     discounted_rewards = torch.tensor(discounted_rewards, dtype=torch.float32)
-    discounted_rewards = (discounted_rewards - discounted_rewards.mean()) / (discounted_rewards.std() + 1e-9)
+    discounted_rewards = (discounted_rewards - discounted_rewards.mean()) / (discounted_rewards.std() + 1e-5)
 
     # calculate loss
     policy_loss = []
@@ -70,10 +70,22 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
 
     # update policy network
     optimizer.zero_grad()
+    # print(discounted_rewards)
+    # print(log_probs)
+    #policy_loss = policy_loss.clone().detach().requires_grad_(True)
+    # print(policy_loss)
 
-    policy_loss = policy_loss.clone().detach().requires_grad_(True)
+    try:
+        policy_loss.backward()
+    except RuntimeError as e:
+        if 'element of the differentiated inputs' in str(e):
+            print("Error: policy_loss doesn't contain grad_fn")
+            exit(1)
+        else:
+            raise e
 
-    policy_loss.backward()
+    # policy_loss.backward()
+    
     optimizer.step()
 
 def play_game(policy_net, optimizer):
@@ -97,14 +109,20 @@ def play_game(policy_net, optimizer):
             selected_qval = torch.tensor(1/85, dtype=torch.float32)
         log_prob = torch.log(selected_qval)
 
+        # print(f"Selected Q- val = {selected_qval}")
+        # print(f"Log Prob = {log_prob}")
         #log_prob = torch.log(policy_net(torch.tensor(state, dtype=torch.float32))[action])
-        
+        if selected_qval.isnan():
+            print(f"Got NaN q value, q values are: {q_vals}")
+            exit(1)
+
+
         reward = game.do_action(actions[action_idx])
         playing_game = game.game_alive()
         log_probs.append(log_prob)
         rewards.append(reward)
 
-    #print(f"Rewards are {rewards}")
+    # print(f"Rewards are {rewards}")
     #print(f"Log probs are {log_probs}")
 
     wins, lives = game.gen_game()
@@ -118,6 +136,9 @@ def play_game(policy_net, optimizer):
     # update policy network
     update_policy(policy_net, optimizer, rewards, log_probs)
 
+
+
+
 pysap = libsap.Game()
 
 # define game state size and number of actions
@@ -129,15 +150,32 @@ policy_net = PolicyNetwork(state_size, num_actions)
 optimizer = optim.Adam(policy_net.parameters(), lr = 0.0001)
 
 
-win_array = []
-# for _ in range(100):
-#     play_game(policy_net, optimizer)
+test_game = libsap.Game()
+test_state = test_game.game_state()
+
+q_vals_before_training = policy_net(torch.tensor(test_state, dtype=torch.float32))
+# print(f"Starting Q vals are = {q_vals_before_training}")
 
 game_count = 0
-while sum(win_array) / 10 < 5:
+win_array = []
+
+for _ in range(50):
     game_count += 1
     play_game(policy_net, optimizer)
     print(f"Current Game Count = {game_count}")
+
+q_vals_after_training = policy_net(torch.tensor(test_state, dtype=torch.float32))
+# print(f"Final Q vals are = {q_vals_after_training}")
+
+
+diff = q_vals_after_training - q_vals_before_training
+print(f"Diff in Q vals are = {diff}")
+
+
+# while sum(win_array) / 10 < 5:
+#     game_count += 1
+#     play_game(policy_net, optimizer)
+#     print(f"Current Game Count = {game_count}")
 
 #play_game(policy_net, optimizer)
 

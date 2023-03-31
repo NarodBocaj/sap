@@ -143,7 +143,7 @@ impl Game{
     }
 
     pub fn game_state(&self) -> PyResult<Vec<i32>> {
-        println!("Game State");
+        //println!("Game State");
         let mut state_vec: Vec<i32> = Vec::new();
         for i in 0..5{//getting all of the team info
             if i < self.friendly_friends.len(){
@@ -371,7 +371,7 @@ impl Game{
             opts_vec.push(vec![]);
         }
 
-        println!("Game Options");
+        //println!("Game Options");
         Ok(opts_vec)
     }
 
@@ -381,7 +381,7 @@ impl Game{
         if opt[0] == -1{//selling
             self.friendly_friends.remove(opt[1] as usize);
             self.money += 1;
-            reward -= 2.0;
+            reward -= 15.0;
         }
         
         else if opt[0] == 1{//buying to open slot
@@ -473,7 +473,7 @@ impl Game{
 
     pub fn game_alive(&self) -> PyResult<bool>{
         if self.wins < 10 && self.lives > 0{
-            println!("Wins = {}, Lives = {}", self.wins, self.lives);
+            //println!("Wins = {}, Lives = {}", self.wins, self.lives);
             Ok(true)
         }
         else{
@@ -513,7 +513,7 @@ pub fn test_battle(game: &mut Game, opp_friends: &mut Vec<friends::Friend>, rewa
 
     if my_friends.len() > 0{
         game.wins += 1;
-        *reward += 10.0 * game.wins as f32;//placeholder for reward
+        *reward += 100.0 * game.wins as f32;//placeholder for reward
         println!("We won!");
     }
     else if my_friends.len() == 0 && opp_friends.len() == 0{ //situation where both vecs have len == 0 is a tie and nothing happens
