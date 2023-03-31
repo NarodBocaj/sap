@@ -472,7 +472,7 @@ impl Game{
     }
 
     pub fn game_alive(&self) -> PyResult<bool>{
-        if self.wins < 10 && self.lives > 0{
+        if self.wins < 10 && self.lives > 0 && self.turnnum < 25{
             //println!("Wins = {}, Lives = {}", self.wins, self.lives);
             Ok(true)
         }
