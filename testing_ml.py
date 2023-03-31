@@ -17,17 +17,20 @@ class PolicyNetwork(torch.nn.Module):
     def __init__(self, state_size, action_size):
         super(PolicyNetwork, self).__init__()
         self.fc1 = torch.nn.Linear(state_size, 128)
-        self.fc2 = torch.nn.Linear(128, 64)
-        self.fc3 = torch.nn.Linear(64, action_size)
+        self.fc2 = torch.nn.Linear(128, 128)
+        self.fc3 = torch.nn.Linear(128, 64)
+        self.fc4 = torch.nn.Linear(64, action_size)
 
         torch.nn.init.xavier_uniform_(self.fc1.weight)
         torch.nn.init.xavier_uniform_(self.fc2.weight)
-        torch.nn.init.uniform_(self.fc3.weight, -0.01, 0.01)
+        torch.nn.init.xavier_uniform_(self.fc3.weight)
+        torch.nn.init.uniform_(self.fc4.weight, -0.01, 0.01)
 
     def forward(self, x):
         x = torch.relu(self.fc1(x))
         x = torch.relu(self.fc2(x))
-        x = torch.softmax(self.fc3(x), dim=-1)
+        x = torch.relu(self.fc3(x))
+        x = torch.softmax(self.fc4(x), dim=-1)
         return x
 
 def choose_action(state, game_options, policy_net):
@@ -89,6 +92,7 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
     
     try:
         policy_loss.backward()
+
     except RuntimeError as e:
         if 'element of the differentiated inputs' in str(e):
             print("Error: policy_loss doesn't contain grad_fn")
@@ -96,8 +100,6 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
         else:
             raise e
 
-    # policy_loss.backward()
-    optimizer.step()
 
     test_qs = policy_net(torch.tensor(test_state, dtype=torch.float32))
     if any(test_qs.isnan()):
@@ -111,6 +113,25 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
         print(f"Policy grad fc3 {policy_net.fc3.weight.grad}")
         print(f"Policy grad fc3 before backward {gradf3}")
         exit(1)
+
+    # policy_loss.backward()
+    optimizer.step()
+    # torch.nn.utils.clip_grad_norm_(policy_net.parameters(), max_norm=1)
+
+    test_qs = policy_net(torch.tensor(test_state, dtype=torch.float32))
+    if any(test_qs.isnan()):
+        print(f"Got NaNs after optimizer {test_qs}")
+        print(f"Rewards were: {rewards}")
+        print(f"Log probs were: {log_probs}")
+        print(f"Policy grad fc1 {policy_net.fc1.weight.grad}")
+        print(f"Policy grad fc1 before backward {gradf1}")
+        print(f"Policy grad fc2 {policy_net.fc2.weight.grad}")
+        print(f"Policy grad fc2 before backward {gradf2}")
+        print(f"Policy grad fc3 {policy_net.fc3.weight.grad}")
+        print(f"Policy grad fc3 before backward {gradf3}")
+        exit(1)
+
+
 
 def play_game(policy_net, optimizer):
     game = libsap.Game()
@@ -171,7 +192,7 @@ num_actions = 85
 
 # initialize policy network
 policy_net = PolicyNetwork(state_size, num_actions)
-optimizer = optim.Adam(policy_net.parameters(), lr = 0.0001)
+optimizer = optim.Adam(policy_net.parameters(), lr = 0.00001)
 
 
 test_game = libsap.Game()
@@ -183,7 +204,7 @@ q_vals_before_training = policy_net(torch.tensor(test_state, dtype=torch.float32
 game_count = 0
 win_array = []
 
-for _ in range(50):
+for _ in range(500):
     game_count += 1
     play_game(policy_net, optimizer)
     print(f"Current Game Count = {game_count}")

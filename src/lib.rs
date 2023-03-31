@@ -157,7 +157,7 @@ impl Game{
             }
             else{
                 for _ in 0..5{
-                    state_vec.push(-64);
+                    state_vec.push(-2);
                 }
             }
         }
@@ -177,7 +177,7 @@ impl Game{
         }
         for _ in (self.shop.frozen.len() + self.shop.for_sale.len())..6{//adding fillers for missing shop slots
             for x in 0..5{
-                state_vec.push(1024);
+                state_vec.push(-2);
             }
         }
         for fud in &self.shop.food{//adding non-frozen food
@@ -190,7 +190,7 @@ impl Game{
         }
         for _ in (self.shop.frozen_food.len() + self.shop.food.len())..2{//adding fillers for missing food shop slots
             for x in 0..2{
-                state_vec.push(1024);
+                state_vec.push(-2);
             }
         }
         if self.lost_lst_rnd{
@@ -381,14 +381,14 @@ impl Game{
         if opt[0] == -1{//selling
             self.friendly_friends.remove(opt[1] as usize);
             self.money += 1;
-            reward -= 15.0;
+            reward -= 2.0;
         }
         
         else if opt[0] == 1{//buying to open slot
             self.shop.buy(&mut self.friendly_friends, opt[1] as usize);
             self.money -= 3;
             self.actions_remaining -= 1;
-            reward += 5.0;
+            reward += 3.0;
         }
 
         else if opt[0] == 2{//buying to combine
@@ -400,7 +400,7 @@ impl Game{
 
             self.money -= 3;
             self.actions_remaining -= 1;
-            reward += 2.0;
+            reward += 0.5;
         }
 
         else if opt[0] == 3{//buying food
@@ -413,13 +413,13 @@ impl Game{
         else if opt[0] == 4{//freeze pet
             self.shop.freeze(opt[1] as usize);
             self.actions_remaining -= 1;
-            reward -= 1.0;
+            reward -= 0.5;
         }
 
         else if opt[0] == 5{//freeze food
             self.shop.freeze_food(opt[1] as usize);
             self.actions_remaining -= 1;
-            reward -= 1.0;
+            reward -= 0.5;
         }
 
         else if opt[0] == 6{//roll
@@ -432,7 +432,7 @@ impl Game{
         else if opt[0] == 7{//swap pets at two different indices
             self.friendly_friends.swap(opt[1] as usize, opt[2] as usize);
             self.actions_remaining -= 1;
-            reward -= 1.0;
+            reward -= 0.2;
         }
 
         else if opt[0] == 8{//combine team pets together
@@ -513,7 +513,7 @@ pub fn test_battle(game: &mut Game, opp_friends: &mut Vec<friends::Friend>, rewa
 
     if my_friends.len() > 0{
         game.wins += 1;
-        *reward += 100.0 * game.wins as f32;//placeholder for reward
+        *reward += 10.0 + (game.wins as f32) * 1.5;//placeholder for reward
         println!("We won!");
     }
     else if my_friends.len() == 0 && opp_friends.len() == 0{ //situation where both vecs have len == 0 is a tie and nothing happens
@@ -522,7 +522,7 @@ pub fn test_battle(game: &mut Game, opp_friends: &mut Vec<friends::Friend>, rewa
     }
     else{
         game.lives -= 1;
-        *reward -= 10.0 * (5.0 - game.lives as f32);//placeholder for reward
+        *reward -= 10.0 + (5.0 - game.lives as f32) * 1.5;//placeholder for reward
         println!("You lost you fucking loser....what's wrongs with you, why can't you do anything right");
     }
 }
