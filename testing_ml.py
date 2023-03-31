@@ -203,11 +203,21 @@ q_vals_before_training = policy_net(torch.tensor(test_state, dtype=torch.float32
 
 game_count = 0
 win_array = []
+average_wins_per_100 = []
+wins = 0
 
-for _ in range(500):
+for i in range(10000):
     game_count += 1
     play_game(policy_net, optimizer)
     print(f"Current Game Count = {game_count}")
+    print("Win per 100 array")
+    print(average_wins_per_100)
+    wins += win_array[-1]
+    if i % 100 == 0:
+        average_wins_per_100.append(wins/100)
+        wins = 0
+
+
 
 q_vals_after_training = policy_net(torch.tensor(test_state, dtype=torch.float32))
 # print(f"Final Q vals are = {q_vals_after_training}")
