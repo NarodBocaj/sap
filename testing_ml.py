@@ -69,12 +69,24 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
     policy_loss = torch.stack(policy_loss).sum()
 
     # update policy network
+    
+    gradf1 = policy_net.fc1.weight.grad
+    gradf2 = policy_net.fc2.weight.grad
+    gradf3 = policy_net.fc3.weight.grad    
+
     optimizer.zero_grad()
     # print(discounted_rewards)
     # print(log_probs)
     #policy_loss = policy_loss.clone().detach().requires_grad_(True)
     # print(policy_loss)
+    test_qs = policy_net(torch.tensor(test_state, dtype=torch.float32))
+    if any(test_qs.isnan()):
+        print(f"Got NaNs before backward {test_qs}")
+        exit(1)
 
+
+
+    
     try:
         policy_loss.backward()
     except RuntimeError as e:
@@ -85,8 +97,20 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
             raise e
 
     # policy_loss.backward()
-    
     optimizer.step()
+
+    test_qs = policy_net(torch.tensor(test_state, dtype=torch.float32))
+    if any(test_qs.isnan()):
+        print(f"Got NaNs after backward {test_qs}")
+        print(f"Rewards were: {rewards}")
+        print(f"Log probs were: {log_probs}")
+        print(f"Policy grad fc1 {policy_net.fc1.weight.grad}")
+        print(f"Policy grad fc1 before backward {gradf1}")
+        print(f"Policy grad fc2 {policy_net.fc2.weight.grad}")
+        print(f"Policy grad fc2 before backward {gradf2}")
+        print(f"Policy grad fc3 {policy_net.fc3.weight.grad}")
+        print(f"Policy grad fc3 before backward {gradf3}")
+        exit(1)
 
 def play_game(policy_net, optimizer):
     game = libsap.Game()
