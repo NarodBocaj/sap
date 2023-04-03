@@ -72,7 +72,7 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
     policy_loss = torch.stack(policy_loss).sum()
 
     # update policy network
-    
+    pol_loss = policy_loss
     gradf1 = policy_net.fc1.weight.grad
     gradf2 = policy_net.fc2.weight.grad
     gradf3 = policy_net.fc3.weight.grad    
@@ -85,6 +85,7 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
     test_qs = policy_net(torch.tensor(test_state, dtype=torch.float32))
     if any(test_qs.isnan()):
         print(f"Got NaNs before backward {test_qs}")
+        print(f"Policy loss was {pol_loss}")
         exit(1)
 
 
@@ -96,6 +97,7 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
     except RuntimeError as e:
         if 'element of the differentiated inputs' in str(e):
             print("Error: policy_loss doesn't contain grad_fn")
+            print(f"Policy loss was {pol_loss}")
             exit(1)
         else:
             raise e
@@ -112,6 +114,7 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
         print(f"Policy grad fc2 before backward {gradf2}")
         print(f"Policy grad fc3 {policy_net.fc3.weight.grad}")
         print(f"Policy grad fc3 before backward {gradf3}")
+        print(f"Policy loss was {pol_loss}")
         exit(1)
 
     # policy_loss.backward()
@@ -129,6 +132,7 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
         print(f"Policy grad fc2 before backward {gradf2}")
         print(f"Policy grad fc3 {policy_net.fc3.weight.grad}")
         print(f"Policy grad fc3 before backward {gradf3}")
+        print(f"Policy loss was {pol_loss}")
         exit(1)
 
 

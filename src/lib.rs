@@ -527,6 +527,11 @@ pub fn test_battle(game: &mut Game, opp_friends: &mut Vec<friends::Friend>, rewa
     }
 }
 
+pub fn check_for_lvl_up(pet1: friends::Friend, pet2: friends::Friend) -> friends::Friend{
+    //placeholder function to do lvlup activies (fish and bonus shop pet)
+    return pet1 + pet2;
+}
+
 //testing pyo3
 #[pyfunction]
 fn hello() -> PyResult<String> {

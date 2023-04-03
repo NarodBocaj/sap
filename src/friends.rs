@@ -4,6 +4,7 @@ use std::ops::Add;
 use rand::{thread_rng, Rng};
 //use rand::distributions::Uniform;
 use std::cmp;
+use crate::Game;
 
 
 #[derive(Clone, Copy)]
@@ -24,13 +25,12 @@ impl Friend{
         if self.id == shop::ANT{
             if friendly_friends.len() > 0{
                 let rand_num = rand::thread_rng().gen_range(0..friendly_friends.len());
-                println!("ant fainting, rand idx = {}", rand_num);
                 friendly_friends[rand_num as usize].attack += 2 * lvl;
                 friendly_friends[rand_num as usize].health += 1 * lvl;
             }
         }
 
-        if self.id == shop::CRICKET{
+        if self.id == shop::CRICKET && friendly_friends.len() < 5{
             let zombie_cricket = Friend{
                 attack: 1 * lvl,
                 health: 1 * lvl,
@@ -66,18 +66,107 @@ impl Friend{
                 }
             }
             else{
-                //not sure this random for second index is working as intended
-                let rnd_idx1 = rand::thread_rng().gen_range(0..friendly_friends.len());
-                let rnd_idx2 = (0..friendly_friends.len()).filter(|x| *x != rnd_idx1).next().unwrap();
-                friendly_friends[rnd_idx1 as usize].attack += 1 * lvl;
-                friendly_friends[rnd_idx1 as usize].health += 1 * lvl;
-                friendly_friends[rnd_idx2 as usize].attack += 1 * lvl;
-                friendly_friends[rnd_idx2 as usize].health += 1 * lvl;
+                let mut rng = thread_rng();
+                let rand_nums = rand::seq::index::sample(&mut rng, friendly_friends.len(), 2).into_vec();
+                friendly_friends[rand_nums[0] as usize].attack += 1 * lvl;
+                friendly_friends[rand_nums[0] as usize].health += 1 * lvl;
+                friendly_friends[rand_nums[1] as usize].attack += 1 * lvl;
+                friendly_friends[rand_nums[1] as usize].health += 1 * lvl;
             }
         }
 
+    }
+
+    pub fn on_sell(&self, friendly_friends: &mut Vec<Friend>, game: &mut Game, _idx: i32) -> (){
+        let lvl = (self.xp / 3) + 1;
+
+        if self.id == shop::BEAVER{
+            if friendly_friends.len() < 3{
+                for i in 0..friendly_friends.len(){
+                    friendly_friends[i].health += 1 * lvl;
+                }
+            }
+            else{
+                let mut rng = thread_rng();
+                let rand_nums = rand::seq::index::sample(&mut rng, friendly_friends.len(), 2).into_vec();
+                friendly_friends[rand_nums[0] as usize].health += 1 * lvl;
+                friendly_friends[rand_nums[1] as usize].health += 1 * lvl;
+            }
+        }
+
+        if self.id == shop::DUCK{
+            for i in 0..game.shop.for_sale.len(){
+                game.shop.for_sale[i].health += 1 * lvl;
+            }
+        }
+
+        if self.id == shop::PIG{
+            game.money += 1 * lvl;
+        }
 
     }
+
+    pub fn start_of_battle(&mut self, friendly_friends: &mut Vec<Friend>, opp_friends: &mut Vec<Friend>, idx: usize) -> (){
+        let lvl = (self.xp / 3) + 1;
+
+        if self.id == shop::MOSQUITO{
+            let mut rng = thread_rng();
+            let min_range = cmp::min(lvl, opp_friends.len() as i32);
+            let rand_nums = rand::seq::index::sample(&mut rng, min_range as usize, lvl as usize).into_vec();
+            for idx in rand_nums{
+                do_dmg(opp_friends, 1, idx as usize);
+            }
+        }
+
+        if self.id == shop::CRAB{
+            let percent_hp = match lvl{
+                1 => 0.5,
+                2 => 1.0,
+                3 => 1.5,
+                _ => 1.0,
+            };
+            if friendly_friends.len() > 1{
+                let max_hp = friendly_friends
+                    .iter()
+                    .enumerate()
+                    .filter(|(i, _)| *i != idx) //exclude crab from copying it's own HP
+                    .max_by_key(|(_, f)| f.health)
+                    .unwrap()
+                    .1
+                    .health;
+                let new_hp: i32 = cmp::max((max_hp as f32 * percent_hp) as i32, 1);
+                self.health = new_hp;
+             }
+        }
+
+        if self.id == shop::DODO{
+            if idx > 0{//check that pet is infront of dod
+                let percent_attack = match lvl{
+                    1 => 0.33,
+                    2 => 0.66,
+                    3 => 1.00,
+                    _ => 1.0,
+                };
+                let bonus_attack = (percent_attack * self.attack as f32) as i32;
+                friendly_friends[idx - 1].attack += bonus_attack;
+            }
+        }
+
+    }
+
+    pub fn before_attack(&mut self, friendly_friends: &mut Vec<Friend>, idx: usize) -> (){
+        let lvl = (self.xp / 3) + 1;
+
+        if self.id == shop::ELEPHANT{
+            let mut attack_count = 0;
+            while idx + 1 < friendly_friends.len() && attack_count < lvl{
+                do_dmg(friendly_friends, 1, idx + 1);
+                attack_count += 1;
+            }
+        }
+
+    }
+
 }
 
 impl Add for Friend{        //should function be banned for pets with diff ids?? how to handle when xp is greater than lvl 3??

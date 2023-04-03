@@ -23,12 +23,17 @@ Pets that may not need there on impl:
     tiger
 
 Large remaining things to do:
-    Implement food
-    Shop system - pretty much done except for food
-    Round system and fighting - pretty much done (maybe make a game class/function)
-    Joinging pets together
-    Shop effect on level up
+    Shop system - lvl up effect
+    Round system and fighting - food effects for fight, calling appropriate methods
+    
 
 Links:
     linking Python to Rust - https://developers.redhat.com/blog/2017/11/16/speed-python-using-rust#
     reinforcement learning vid - https://www.youtube.com/watch?v=Mut_u40Sqz4
+
+Skipped Pets:
+    fish - need to implement check for level up that will call a level up method on a  pet and call the shop 
+    horse
+
+Pets to fix:
+    Flamingo currently assumes it is the first pet in the vec, needs to assume it is the idx pet
