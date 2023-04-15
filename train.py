@@ -18,8 +18,8 @@ class PolicyNetwork(torch.nn.Module):
         super(PolicyNetwork, self).__init__()
         self.fc1 = torch.nn.Linear(state_size, 128)
         self.fc2 = torch.nn.Linear(128, 128)
-        self.fc3 = torch.nn.Linear(128, 64)
-        self.fc4 = torch.nn.Linear(64, action_size)
+        self.fc3 = torch.nn.Linear(128, 128)
+        self.fc4 = torch.nn.Linear(128, action_size)
 
         torch.nn.init.xavier_uniform_(self.fc1.weight)
         torch.nn.init.xavier_uniform_(self.fc2.weight)
@@ -76,6 +76,8 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
     gradf1 = policy_net.fc1.weight.grad
     gradf2 = policy_net.fc2.weight.grad
     gradf3 = policy_net.fc3.weight.grad    
+    policy_losses.append(pol_loss)
+
 
     optimizer.zero_grad()
     # print(discounted_rewards)
@@ -124,8 +126,8 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
     test_qs = policy_net(torch.tensor(test_state, dtype=torch.float32))
     if any(test_qs.isnan()):
         print(f"Got NaNs after optimizer {test_qs}")
-        print(f"Rewards were: {rewards}")
-        print(f"Log probs were: {log_probs}")
+        # print(f"Rewards were: {rewards}")
+        # print(f"Log probs were: {log_probs}")
         print(f"Policy grad fc1 {policy_net.fc1.weight.grad}")
         print(f"Policy grad fc1 before backward {gradf1}")
         print(f"Policy grad fc2 {policy_net.fc2.weight.grad}")
@@ -133,6 +135,7 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
         print(f"Policy grad fc3 {policy_net.fc3.weight.grad}")
         print(f"Policy grad fc3 before backward {gradf3}")
         print(f"Policy loss was {pol_loss}")
+        print(f"All pol losses were {policy_losses}")
         exit(1)
 
 
@@ -196,7 +199,7 @@ num_actions = 85
 
 # initialize policy network
 policy_net = PolicyNetwork(state_size, num_actions)
-optimizer = optim.Adam(policy_net.parameters(), lr = 0.00001)
+optimizer = optim.Adam(policy_net.parameters(), lr = 0.0001)
 
 
 test_game = libsap.Game()
@@ -208,6 +211,7 @@ q_vals_before_training = policy_net(torch.tensor(test_state, dtype=torch.float32
 game_count = 0
 win_array = []
 average_wins_per_100 = []
+policy_losses = []
 wins = 0
 
 for i in range(10000):
