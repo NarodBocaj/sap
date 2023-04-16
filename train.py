@@ -4,8 +4,6 @@ from pathlib import Path
 import time
 import torch
 import torch.optim as optim
-import numpy as np
-
 
 
 sys.path.append(str(Path(__file__).resolve().parent / "target" / "release"))
@@ -17,8 +15,8 @@ class PolicyNetwork(torch.nn.Module):
     def __init__(self, state_size, action_size):
         super(PolicyNetwork, self).__init__()
         self.fc1 = torch.nn.Linear(state_size, 128)
-        self.fc2 = torch.nn.Linear(128, 128)
-        self.fc3 = torch.nn.Linear(128, 128)
+        self.fc2 = torch.nn.Linear(128, 256)
+        self.fc3 = torch.nn.Linear(256, 128)
         self.fc4 = torch.nn.Linear(128, action_size)
 
         torch.nn.init.xavier_uniform_(self.fc1.weight)
@@ -199,7 +197,7 @@ num_actions = 85
 
 # initialize policy network
 policy_net = PolicyNetwork(state_size, num_actions)
-optimizer = optim.Adam(policy_net.parameters(), lr = 0.0001)
+optimizer = optim.Adam(policy_net.parameters(), lr = 0.00001)
 
 
 test_game = libsap.Game()

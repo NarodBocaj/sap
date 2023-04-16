@@ -37,3 +37,8 @@ Skipped Pets:
 
 Pets to fix:
     Flamingo currently assumes it is the first pet in the vec, needs to assume it is the idx pet
+
+ML things to do:
+    Force model to learn rules by giving it negative reward until it picks valid choice
+    Make a batch size so that it plays batch size number of games before updating policy
+    One hot encode the categorical elements of the game state
