@@ -28,7 +28,7 @@ class PolicyNetwork(torch.nn.Module):
         x = torch.relu(self.fc1(x))
         x = torch.relu(self.fc2(x))
         x = torch.relu(self.fc3(x))
-        x = torch.softmax(self.fc4(x), dim=-1)
+        x = torch.softmax(self.fc4(x), dim = -1)
         return x
 
 def choose_action(state, game_options, policy_net):
@@ -126,12 +126,12 @@ def update_policy(policy_net, optimizer, rewards, log_probs):
         print(f"Got NaNs after optimizer {test_qs}")
         # print(f"Rewards were: {rewards}")
         # print(f"Log probs were: {log_probs}")
-        print(f"Policy grad fc1 {policy_net.fc1.weight.grad}")
-        print(f"Policy grad fc1 before backward {gradf1}")
-        print(f"Policy grad fc2 {policy_net.fc2.weight.grad}")
-        print(f"Policy grad fc2 before backward {gradf2}")
-        print(f"Policy grad fc3 {policy_net.fc3.weight.grad}")
-        print(f"Policy grad fc3 before backward {gradf3}")
+        # print(f"Policy grad fc1 {policy_net.fc1.weight.grad}")
+        # print(f"Policy grad fc1 before backward {gradf1}")
+        # print(f"Policy grad fc2 {policy_net.fc2.weight.grad}")
+        # print(f"Policy grad fc2 before backward {gradf2}")
+        # print(f"Policy grad fc3 {policy_net.fc3.weight.grad}")
+        # print(f"Policy grad fc3 before backward {gradf3}")
         print(f"Policy loss was {pol_loss}")
         print(f"All pol losses were {policy_losses}")
         exit(1)
