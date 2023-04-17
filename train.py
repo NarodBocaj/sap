@@ -31,25 +31,29 @@ class PolicyNetwork(torch.nn.Module):
         x = torch.softmax(self.fc4(x), dim = -1)
         return x
 
-def choose_action(state, game_options, policy_net):
-    # convert state to PyTorch tensor
-    state = torch.tensor(state, dtype=torch.float32)
+def choose_action(state, game_options, policy_net, optimizer):
+    if type(state) != torch.Tensor:
+        state = torch.tensor(state, dtype = torch.float32)
     
-    # get Q values for each action using the policy network
+    
     q_values = policy_net(state)
 
-    # set unavailable actions' q_values to negative infinity
-    for i, option in enumerate(game_options):
-        if not option:
-            q_values[i] = -float('inf')
 
-    # choose action with the highest Q value
-    action, action_idx = torch.argmax(q_values).item(), torch.argmax(q_values) 
+    action, action_idx = torch.argmax(q_values).item(), torch.argmax(q_values)
+    
+    if not game_options[action_idx]: #game_options will be empty list if that action is unavailable in the current game state
+        reward = -0.1
+        loss = -q_values[action_idx] * reward
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        return choose_action(state, game_options, policy_net, optimizer)
 
     #print(f"Choosing action from {q_values}")
 
-
     return (action, action_idx)
+
+
 
 def update_policy(policy_net, optimizer, rewards, log_probs):
     # calculate discounted rewards
@@ -143,25 +147,21 @@ def play_game(policy_net, optimizer):
     log_probs = []
     rewards = []
     playing_game = True
-    # play the game and collect rewards and log probabilities
+
     while playing_game:
         state = game.game_state()
         actions = game.game_options()
-        action, action_idx = choose_action(state, actions, policy_net)
+        action, action_idx = choose_action(state, actions, policy_net, optimizer)
 
         q_vals = policy_net(torch.tensor(state, dtype=torch.float32))
 
-        # print(f"Q vals are = {q_vals}")
-        # print(sum(q_vals))
 
         selected_qval = q_vals[action]
         if selected_qval == 0:
             selected_qval = torch.tensor(1/85, dtype=torch.float32)
         log_prob = torch.log(selected_qval)
 
-        # print(f"Selected Q- val = {selected_qval}")
-        # print(f"Log Prob = {log_prob}")
-        #log_prob = torch.log(policy_net(torch.tensor(state, dtype=torch.float32))[action])
+
         if selected_qval.isnan():
             print(f"Got NaN q value, q values are: {q_vals}")
             exit(1)
@@ -172,8 +172,6 @@ def play_game(policy_net, optimizer):
         log_probs.append(log_prob)
         rewards.append(reward)
 
-    # print(f"Rewards are {rewards}")
-    #print(f"Log probs are {log_probs}")
 
     wins, lives = game.gen_game()
     if len(win_array) > 10:
@@ -183,7 +181,7 @@ def play_game(policy_net, optimizer):
         win_array.append(wins)
     print(f"Won {wins} games. {lives} remaining")
 
-    # update policy network
+
     update_policy(policy_net, optimizer, rewards, log_probs)
 
 
@@ -212,7 +210,7 @@ average_wins_per_100 = []
 policy_losses = []
 wins = 0
 
-for i in range(10000):
+for i in range(1000):
     game_count += 1
     play_game(policy_net, optimizer)
     print(f"Current Game Count = {game_count}")
